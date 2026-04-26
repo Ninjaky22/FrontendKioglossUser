@@ -159,11 +159,41 @@ export default function Product() {
                     await productService.removeFavorite(idFa);
                     removeFavoriteId(product.id);
                     setFavorited(false);
+                    Swal.fire({ toast: true, 
+                        position: 'top-end', icon: 'info', 
+                        title: 'Eliminado de favoritos', 
+                        showConfirmButton: false, 
+                        timer: 2000, timerProgressBar: true,
+                        customClass: {
+                            title: 'font-winkySans',
+                            htmlContainer: 'font-winkySans',
+                            confirmButton: 'font-winkySans',
+                            cancelButton: 'font-winkySans',
+                            title: 'font-winkySans',
+                            htmlContainer: 'font-winkySans',
+                            confirmButton: 'font-winkySans',
+                            cancelButton: 'font-winkySans'
+                        }});
                 }
             } else {
                 const data = await productService.addFavorite(accountId, product.id);
                 setFavorited(true);
                 addFavoriteId(product.id, data?.idFa);
+                Swal.fire({
+                toast: true, position: 'top-end', icon: 'success',
+                title: 'Agregado a favoritos', 
+                showConfirmButton: false, 
+                timer: 2000, 
+                timerProgressBar: true,
+                    customClass: {
+                        title: 'font-winkySans',
+                        htmlContainer: 'font-winkySans',
+                        confirmButton: 'font-winkySans',
+                        title: 'font-winkySans',
+                        htmlContainer: 'font-winkySans',
+                        confirmButton: 'font-winkySans',
+                    }
+            });
             }
         } catch (e) { console.error('Error toggling favorite', e); }
     };
@@ -321,9 +351,9 @@ export default function Product() {
                         </div>
 
                         {/* Price */}
-                        <div className="bg-purple-50 border border-purple-100 rounded-2xl px-5 py-4">
-                            <p className="text-xs text-gray-400 font-winkySans mb-0.5">Precio</p>
-                            <p className="text-4xl font-bold text-[#9b30a0] font-winkySans tracking-tight">
+                        <div className="bg-purple-50 border border-purple-100 rounded-2xl px-5 py-2">
+                            <p className="text-xs text-gray-400 font-winkySans mb-0.5">PRECIO</p>
+                            <p className="text-xl font-bold text-[#9b30a0] font-winkySans tracking-tight">
                                 COP {Number(product.price).toLocaleString()}
                             </p>
                         </div>
@@ -460,7 +490,7 @@ export default function Product() {
                         Descripción del Producto
                     </h3>
                     <div
-                        className="text-gray-700 font-winkySans leading-relaxed quill-content max-w-none overflow-hidden wrap-break-word [&_img]:max-w-full [&_img]:h-auto [&_table]:w-full [&_table]:overflow-x-auto [&_iframe]:max-w-full"
+                        className="text-gray-700 font-winkySans leading-relaxed quill-content max-w-none wrap-break-word [&_img]:max-w-full [&_img]:h-auto [&_table]:w-full [&_table]:overflow-x-auto [&_iframe]:max-w-full"
                         dangerouslySetInnerHTML={{ __html: product.description || '' }}
                     />
                 </div>

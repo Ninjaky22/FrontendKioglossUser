@@ -126,16 +126,21 @@ export default function ProductCard({ product }) {
                     await productService.removeFavorite(idFa);
                     removeFavoriteId(product.id);
                      setFavorited(false);
-                    Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Eliminado de favoritos', showConfirmButton: false, timer: 2000, timerProgressBar: true,customClass: {
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans',
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans'
-            } });
+                    Swal.fire({ toast: true, 
+                        position: 'top-end', icon: 'info', 
+                        title: 'Eliminado de favoritos', 
+                        showConfirmButton: false, 
+                        timer: 2000, timerProgressBar: true,
+                        customClass: {
+                            title: 'font-winkySans',
+                            htmlContainer: 'font-winkySans',
+                            confirmButton: 'font-winkySans',
+                            cancelButton: 'font-winkySans',
+                            title: 'font-winkySans',
+                            htmlContainer: 'font-winkySans',
+                            confirmButton: 'font-winkySans',
+                            cancelButton: 'font-winkySans'
+                        }});
                 }
             } else {
                 const data = await productService.addFavorite(accountId, product.id);
