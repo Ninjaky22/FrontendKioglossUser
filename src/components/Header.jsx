@@ -25,6 +25,7 @@ export default function Header() {
     const { isAuthenticated, logout } = useAuth();
     const { cart, cartCount, removeItem } = useCart();
     const [cartOpen, setCartOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // ── Autocomplete ──
     const [suggestions, setSuggestions] = useState([]);
@@ -134,12 +135,12 @@ export default function Header() {
 
     return (
         <>
-            <header className="py-4 bg-white shadow-sm">
-                <div className="container flex items-center justify-between">
-                    <Link to="/"><img src="/assets/images/logo.png" alt="Logo" className="w-48" /></Link>
+            <header className="py-4 bg-white shadow-sm relative z-40">
+                <div className="container flex flex-wrap items-center justify-between gap-y-3">
+                    <Link to="/" className="w-1/2 md:w-auto order-1 shrink-0"><img src="/assets/images/logo.png" alt="Logo" className="w-32 md:w-48" /></Link>
 
                     {/* ── Barra de búsqueda con autocomplete ── */}
-                    <div className="w-full max-w-xl relative flex" ref={searchRef}>
+                    <div className="order-3 w-full md:max-w-xl relative flex md:order-2 mt-1 md:mt-0" ref={searchRef}>
                         <span className="absolute left-4 top-3 text-lg text-gray-400 z-10">
                             <i className="fa-solid fa-magnifying-glass"></i>
                         </span>
@@ -150,20 +151,20 @@ export default function Header() {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSearch(e)}
                                 onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                                className="w-full border border-gray-200 border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none focus:border-[#610361] focus:ring-2 focus:ring-[#610361]/30 hidden md:flex font-winkySans hover:bg-[#FFFF] transition-all"
+                                className="w-full border border-gray-200 border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none focus:border-[#610361] focus:ring-2 focus:ring-[#610361]/30 font-winkySans hover:bg-[#FFFF] transition-all text-sm md:text-base"
                                 placeholder="Buscar productos"
                                 autoComplete="off"
                             />
                             <button
                                 onClick={handleSearch}
-                                className="bg-[#610361] text-white px-8 rounded-r-md md:flex items-center cursor-pointer font-winkySans hover:bg-[#4a024a] focus:ring-2 focus:ring-[#610361]/30 transition-all"
+                                className="bg-[#610361] text-white px-4 md:px-8 rounded-r-md flex items-center justify-center cursor-pointer font-winkySans hover:bg-[#4a024a] focus:ring-2 focus:ring-[#610361]/30 transition-all text-sm md:text-base"
                             >
                                 Buscar
                             </button>
 
                             {/* ── Dropdown de sugerencias ── */}
                             {showSuggestions && (
-                                <div className="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden hidden md:block">
+                                <div className="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
                                     {suggestionsLoading ? (
                                         <div className="flex items-center gap-2 px-4 py-3 text-sm text-gray-400 font-winkySans">
                                             <i className="fa-solid fa-spinner animate-spin text-[#610361]"></i>
@@ -207,31 +208,31 @@ export default function Header() {
                         </div>
                     </div>
 
-                    <div className="flex items-center space-x-5">
+                    <div className="order-2 w-1/2 md:w-auto flex justify-end items-center space-x-4 md:space-x-5 md:order-3">
                         {isAuthenticated && (
-                            <Link to="/wishlist" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
-                                <div className="text-2xl"><i className="fa-regular fa-heart"></i></div>
-                                <div className="text-xs leading-3">Deseados</div>
+                            <Link to="/wishlist" className="hidden sm:block text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
+                                <div className="text-xl md:text-2xl"><i className="fa-regular fa-heart"></i></div>
+                                <div className="text-[10px] md:text-xs leading-3 hidden sm:block">Deseados</div>
                             </Link>
                         )}
                         <div className="relative"
                             onMouseEnter={() => setCartOpen(true)}
                             onMouseLeave={() => setCartOpen(false)}>
                             <Link to="/cart" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium block">
-                                <div className="text-2xl relative inline-block">
+                                <div className="text-xl md:text-2xl relative inline-block">
                                     <i className="fa-solid fa-bag-shopping"></i>
                                     {cartCount > 0 && (
-                                        <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[15px]  w-5 h-5 rounded-full flex items-center justify-center leading-none ring-2 ring-white">
+                                        <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[12px] md:text-[15px] w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center leading-none ring-2 ring-white">
                                             {cartCount > 9 ? '9+' : cartCount}
                                         </span>
                                     )}
                                 </div>
-                                <div className="text-xs leading-3">Carrito</div>
+                                <div className="text-[10px] md:text-xs leading-3 hidden sm:block">Carrito</div>
                             </Link>
 
                             {/* Cart Preview Dropdown */}
                             {cartOpen && (
-                                <div className="absolute right-0 top-full mt-1 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+                                <div className="absolute right-0 md:right-0 top-full mt-1 w-72 md:w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
                                     {cart.length === 0 ? (
                                         <div className="p-6 text-center text-gray-400 font-winkySans font-medium">
                                             <i className="fa-solid fa-cart-shopping text-3xl mb-2"></i>
@@ -276,36 +277,46 @@ export default function Header() {
                         </div>
                         {isAuthenticated ? (
                             <Link to="/account" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
-                                <div className="text-2xl"><i className="fa-regular fa-user"></i></div>
-                                <div className="text-xs leading-3">Cuenta</div>
+                                <div className="text-xl md:text-2xl"><i className="fa-regular fa-user"></i></div>
+                                <div className="text-[10px] md:text-xs leading-3 hidden sm:block">Cuenta</div>
                             </Link>
                         ) : (
                             <Link to="/login" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
-                                <div className="text-2xl"><i className="fa-solid fa-right-to-bracket"></i></div>
-                                <div className="text-xs leading-3">Ingresar</div>
+                                <div className="text-xl md:text-2xl"><i className="fa-solid fa-right-to-bracket"></i></div>
+                                <div className="text-[10px] md:text-xs leading-3 hidden sm:block">Ingresar</div>
                             </Link>
                         )}
+                        
+                        {/* Hamburger Button */}
+                        <button 
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+                            className="md:hidden text-2xl text-gray-600 hover:text-[#9b30a0] transition ml-2"
+                        >
+                            <i className={`fa-solid ${isMobileMenuOpen ? 'fa-xmark' : 'fa-bars'}`}></i>
+                        </button>
                     </div>
                 </div>
             </header>
 
-            <nav className="bg-[#610361]">
-                <div className="container flex">
-                    <div className="flex items-center justify-between grow md:pl-12 py-4 text-lg">
-                        <div className="flex items-center space-x-6 capitalize">
-                            <Link to="/" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Inicio</Link>
-                            <Link to="/shop" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Productos</Link>
-                            <Link to="/about" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Sobre Nosotros</Link>
-                            <Link to="/contact" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Contáctanos</Link>
+            <nav className={`bg-[#610361] overflow-hidden transition-all duration-400 ease-in-out ${isMobileMenuOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0 md:max-h-[500px] md:opacity-100 md:overflow-visible'}`}>
+                <div className="container">
+                    <div className="flex flex-col md:flex-row items-center justify-between grow md:pl-12 py-4 text-base md:text-lg gap-4 md:gap-0">
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:space-x-6 capitalize w-full md:w-auto">
+                            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Inicio</Link>
+                            <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Productos</Link>
+                            <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Sobre Nosotros</Link>
+                            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Contáctanos</Link>
                         </div>
-                        {isAuthenticated ? (
-                            <button onClick={handleLogout}
-                                className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium cursor-pointer">
-                                Cerrar Sesión
-                            </button>
-                        ) : (
-                            <Link to="/login" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Iniciar Sesión</Link>
-                        )}
+                        <div className="w-full md:w-auto border-t border-white/20 pt-4 md:border-none md:pt-0 flex justify-center">
+                            {isAuthenticated ? (
+                                <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                                    className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium cursor-pointer text-sm md:text-lg">
+                                    Cerrar Sesión
+                                </button>
+                            ) : (
+                                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium text-sm md:text-lg">Iniciar Sesión</Link>
+                            )}
+                        </div>
                     </div>
                 </div>
             </nav>
