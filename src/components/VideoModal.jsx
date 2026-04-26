@@ -31,28 +31,30 @@ export default function VideoModal({ video, onClose }) {
 
     const isDirect = parsed?.platform === 'direct';
 
+    // Altura extra para empujar la barra blanca de Instagram fuera del recorte.
+    // La barra de likes/comentarios mide ~160px en embeds de Instagram.
+    const INSTAGRAM_BAR_HEIGHT = 160;
+    const isInstagram = parsed?.platform === 'instagram';
+
     return createPortal(
         <div
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-9999 flex items-center justify-center p-4 font-winkySans"
             onClick={onClose}
         >
             <div
-                className="relative w-full max-w-lg animate-[scaleIn_0.2s_ease-out]"
+                className="relative w-full max-w-[400px] animate-[scaleIn_0.2s_ease-out]"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-black">
-                    {/* Close button */}
+                {/* ── Contenedor del video ── */}
+                <div className="relative aspect-9/16 rounded-2xl overflow-hidden bg-black shadow-2xl">
+
+                    {/* Botón cerrar — dentro del frame, esquina superior derecha */}
                     <button
                         onClick={onClose}
-                        className="absolute top-3 right-3 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors z-20"
+                        className="absolute top-3 right-3 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-[#610361] transition-all z-20 border border-white/10"
                     >
-                        <X size={20} />
-                    </button>
-
-                    {/* Username */}
-                    <div className="absolute top-3 left-4 z-20">
-                        <span className="text-white font-medium text-sm drop-shadow-lg">{video.username}</span>
-                    </div>
+                        <X size={18} />
+                    </button>                    
 
                     {parsed ? (
                         isDirect ? (
@@ -65,19 +67,35 @@ export default function VideoModal({ video, onClose }) {
                                 playsInline
                                 className="w-full h-full object-contain"
                             />
-                        ) : (
-                            <iframe
-                                src={getModalEmbedUrl()}
-                                className="w-full h-full"
-                                style={{ border: 0 }}
-                                allow="autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                                allowFullScreen
-                            />
+                        ) : (                      
+                            <div
+                                className="absolute inset-0 overflow-hidden"
+                                style={isInstagram ? { paddingBottom: 0 } : {}}
+                            >
+                                <iframe
+                                    src={getModalEmbedUrl()}
+                                    style={{
+                                        border: 0,
+                                        width: '100%',
+                                        height: isInstagram
+                                            ? `calc(100% + ${INSTAGRAM_BAR_HEIGHT}px)`
+                                            : '80%',
+                                        display: 'block',
+                                    }}
+                                    allow="autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                                    allowFullScreen
+                                />
+                            </div>
                         )
                     ) : (
                         <img src={video.thumbnailUrl} alt="Video" className="w-full h-full object-cover" />
                     )}
                 </div>
+
+                {/* Hint */}
+                <p className="text-center text-white/30 text-xs mt-3 font-winkySans">
+                    Presiona <kbd className="bg-white/10 px-1.5 py-0.5 rounded text-[10px]">Esc</kbd> o toca fuera para cerrar
+                </p>
             </div>
         </div>,
         document.body

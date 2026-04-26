@@ -8,7 +8,7 @@ export default function PayPalButton({ amount, onSuccess, onError, description =
     const [scriptLoaded, setScriptLoaded] = useState(false);
     const buttonsRendered = useRef(false);
     
-    // ✅ Guardar callbacks en refs para no recrear el botón cuando cambian
+    //Guardar callbacks en refs para no recrear el botón cuando cambian
     const onSuccessRef = useRef(onSuccess);
     const onErrorRef = useRef(onError);
     
@@ -23,10 +23,10 @@ export default function PayPalButton({ amount, onSuccess, onError, description =
         script.async = true;
         script.onload = () => setScriptLoaded(true);
         document.body.appendChild(script);
-    }, []); // ✅ Solo se ejecuta una vez
+    }, []); //Solo se ejecuta una vez
 
     useEffect(() => {
-        // ✅ No renderizar si ya están los botones o no hay condiciones
+        //No renderizar si ya están los botones o no hay condiciones
         if (!scriptLoaded || !paypalRef.current || buttonsRendered.current) return;
 
         buttonsRendered.current = true;
@@ -49,7 +49,7 @@ export default function PayPalButton({ amount, onSuccess, onError, description =
                 try {
                     const order = await actions.order.capture();
                     console.log("Pago capturado con éxito:", order);
-                    // ✅ Esperar antes de llamar onSuccess para que PayPal cierre limpiamente
+                    //Esperar antes de llamar onSuccess para que PayPal cierre limpiamente
                     await new Promise(resolve => setTimeout(resolve, 300));
                     if (onSuccessRef.current) onSuccessRef.current(order);
                 } catch (err) {
@@ -69,7 +69,7 @@ export default function PayPalButton({ amount, onSuccess, onError, description =
             }
         }).render(paypalRef.current);
 
-    }, [scriptLoaded]); // ✅ Solo depende de scriptLoaded
+    }, [scriptLoaded]); //Solo depende de scriptLoaded
 
     return (
         <div ref={paypalRef} className="w-full min-h-[150px]">

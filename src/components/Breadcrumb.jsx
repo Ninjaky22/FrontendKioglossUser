@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function Breadcrumb({ items = [{ label: 'Inicio', path: '/' }] }) {
     return (
-        <div className="container py-4 flex items-center gap-3">
+        <div className="container py-4 flex items-center gap-3 font-winkySans font-medium">
             {items.map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
                     {item.path ? (

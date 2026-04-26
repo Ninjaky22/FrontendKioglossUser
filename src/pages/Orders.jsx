@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import productService from '../services/productService';
 import Breadcrumb from '../components/Breadcrumb';
+import Swal from 'sweetalert2';
 
 export default function Orders() {
     const navigate = useNavigate();
@@ -52,11 +53,10 @@ export default function Orders() {
         const { autoTable } = await import('jspdf-autotable');
 
         const doc = new jsPDF('p', 'pt');
-        const purple = [97, 3, 97];       // #610361
+        const purple = [97, 3, 97];
         const lightPurple = [243, 196, 255];
         const pageW = doc.internal.pageSize.getWidth();
 
-        // --- Logo ---
         let logoLoaded = false;
         try {
             const logoBase64 = await loadImageAsBase64(window.location.origin + '/assets/images/logo.png');
@@ -69,7 +69,6 @@ export default function Orders() {
             doc.text('Kio Gloss', 40, 55);
         }
 
-        // --- Company info ---
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         doc.setTextColor(100);
@@ -77,7 +76,6 @@ export default function Orders() {
         doc.text('kiogloss@gmail.com', 170, 55);
         doc.text('+57 300 123 4567', 170, 70);
 
-        // --- Invoice title & number ---
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(22);
         doc.setTextColor(...purple);
@@ -89,12 +87,10 @@ export default function Orders() {
         doc.setFontSize(10);
         doc.text(order.date || new Date().toLocaleDateString('es-CO'), pageW - 40, 73, { align: 'right' });
 
-        // --- Separator line ---
         doc.setDrawColor(...purple);
         doc.setLineWidth(2);
         doc.line(40, 88, pageW - 40, 88);
 
-        // --- Bill to ---
         autoTable(doc, {
             startY: 100,
             head: [['Facturar a']],
@@ -112,7 +108,6 @@ export default function Orders() {
             styles: { lineColor: [220, 220, 220], lineWidth: 0.5 },
         });
 
-        // --- Order status ---
         autoTable(doc, {
             startY: 100,
             head: [['Detalle del Pedido']],
@@ -127,7 +122,6 @@ export default function Orders() {
             styles: { lineColor: [220, 220, 220], lineWidth: 0.5 },
         });
 
-        // --- Products table ---
         const productsY = Math.max(doc.lastAutoTable?.finalY ?? 190, 190) + 20;
         const products = (order.shopping || []).map(item => ({
             descripcion: item.name || item.title || 'Producto',
@@ -159,7 +153,6 @@ export default function Orders() {
             styles: { lineColor: [220, 220, 220], lineWidth: 0.3 },
         });
 
-        // --- Totals table ---
         const totalsY = (doc.lastAutoTable?.finalY ?? productsY) + 10;
         const subtotal = Number(order.amount) || 0;
         autoTable(doc, {
@@ -179,7 +172,6 @@ export default function Orders() {
             styles: { fontSize: 10, lineColor: [220, 220, 220], lineWidth: 0.3 },
         });
 
-        // --- Footer ---
         const footerY = doc.internal.pageSize.getHeight() - 60;
         doc.setDrawColor(...purple);
         doc.setLineWidth(1);
@@ -212,76 +204,172 @@ export default function Orders() {
         return map[status?.toUpperCase()] || 'bg-gray-100 text-gray-800';
     };
 
+    const getStatusIcon = (status) => {
+        const map = {
+            PENDING: 'fa-solid fa-clock',
+            PROCESSING: 'fa-solid fa-gear fa-spin',
+            SHIPPED: 'fa-solid fa-truck',
+            DELIVERED: 'fa-solid fa-circle-check',
+            CANCELLED: 'fa-solid fa-circle-xmark',
+        };
+        return map[status?.toUpperCase()] || 'fa-solid fa-circle-question';
+    };
+
     if (loading) return (
-        <div className="bg-[#F7E6FE] flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#610361]"></div>
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4"
+            style={{ background: 'linear-gradient(135deg, #fdf4ff 0%, #f3e8ff 50%, #fce7f3 100%)' }}>
+            <div className="relative">
+                <div className="w-16 h-16 rounded-full border-4 border-[#f3d5ff] border-t-[#610361] animate-spin"></div>
+                <i className="fa-solid fa-bag-shopping absolute inset-0 flex items-center justify-center text-[#610361] text-lg"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}></i>
+            </div>
+            <p className="text-[#610361] font-winkySans text-sm tracking-widest uppercase opacity-70">Cargando pedidos…</p>
         </div>
     );
 
     return (
-        <div className="bg-[#F7E6FE]">
+        <div className="font-winkySans min-h-screen"
+            style={{ background: 'linear-gradient(160deg, #fdf4ff 0%, #f5e8ff 40%, #fce7f3 100%)' }}>
+
+            {/* Decorative blobs */}
+            <div className="fixed bottom-0 left-0 w-80 h-80 rounded-full opacity-15 pointer-events-none"
+                style={{ background: 'radial-gradient(circle, #9333ea, transparent)', transform: 'translate(-40%, 40%)' }} />
+
             <Breadcrumb items={[
                 { label: 'Inicio', path: '/', icon: 'fa-solid fa-house text-[#610361]' },
                 { label: 'Mis Pedidos' },
             ]} />
-            <div className="container py-8">
-                <h2 className="text-3xl font-bold text-[#610361] font-winkySans mb-6">
-                    <i className="fa-solid fa-box mr-2"></i>Mis Pedidos
-                </h2>
+
+            <div className="container py-10 px-4 max-w-4xl mx-auto relative">
+
+                {/* Header */}
+                <div className="mb-10 flex items-end gap-4">
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0"
+                        style={{ background: 'linear-gradient(135deg, #610361, #a21caf)' }}>
+                        <i className="fa-solid fa-bag-shopping text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#a21caf] opacity-70 mb-0.5">Tu historial</p>
+                        <h2 className="text-4xl font-bold text-[#610361] font-winkySans leading-none">Mis Pedidos</h2>
+                    </div>
+                </div>
+
+                {/* Empty state */}
                 {orders.length === 0 ? (
-                    <div className="bg-white rounded-xl shadow p-12 text-center">
-                        <i className="fa-solid fa-box-open text-6xl text-gray-300 mb-4"></i>
-                        <h3 className="text-xl text-gray-600 font-winkySans">No tienes pedidos aún</h3>
-                        <Link to="/shop" className="mt-6 inline-block px-8 py-3 bg-[#610361] text-white rounded-lg hover:bg-[#500250] transition font-winkySans">
+                    <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl p-16 text-center border border-purple-100">
+                        <div className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center"
+                            style={{ background: 'linear-gradient(135deg, #f3d5ff, #fce7f3)' }}>
+                            <i className="fa-solid fa-box-open text-4xl text-[#c084fc]"></i>
+                        </div>
+                        <h3 className="text-2xl font-bold text-[#610361] font-winkySans mb-2">Aún no tienes pedidos</h3>
+                        <p className="text-gray-400 font-winkySans text-sm mb-8">¡Explora nuestra tienda y encuentra algo que te encante!</p>
+                        <Link to="/shop"
+                            className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl text-white font-winkySans font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+                            style={{ background: 'linear-gradient(135deg, #610361, #a21caf)' }}>
+                            <i className="fa-solid fa-sparkles"></i>
                             Comprar Ahora
                         </Link>
                     </div>
                 ) : (
-                    <div className="space-y-4">
-                        {orders.map(order => (
-                            <div key={order.id} className="bg-white rounded-xl shadow p-6">
-                                <div className="flex flex-wrap justify-between items-center mb-4">
-                                    <div>
-                                        <span className="text-lg font-bold text-[#610361] font-winkySans">Pedido #{order.id}</span>
-                                        <span className={`ml-3 px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>{order.status}</span>
+                    <div className="space-y-6">
+                        {orders.map((order, idx) => (
+                            <div key={order.id}
+                                className="group bg-white/75 backdrop-blur-sm rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 border border-purple-100/60 overflow-hidden"
+                                style={{ animationDelay: `${idx * 60}ms` }}>
+
+                                {/* Order header strip */}
+                                <div className="px-6 py-4 flex flex-wrap items-center justify-between gap-3"
+                                    style={{ background: 'linear-gradient(90deg, #faf0ff, #fdf4ff)' }}>
+                                    <div className="flex items-center gap-3">
+                                        {/* Order number badge */}
+                                        <div className="px-3 py-1 rounded-xl text-xs font-bold tracking-wider text-white"
+                                            style={{ background: 'linear-gradient(135deg, #610361, #a21caf)' }}>
+                                            #{String(order.id).padStart(4, '0')}
+                                        </div>
+
+                                        {/* Status badge */}
+                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold ${getStatusColor(order.status)}`}>
+                                            <i className={`${getStatusIcon(order.status)} text-[10px]`}></i>
+                                            {order.status}
+                                        </span>
                                     </div>
-                                    <div className="flex gap-2 mt-2 md:mt-0">
-                                        <button onClick={() => downloadPDF(order)}
-                                            className="px-4 py-2 bg-[#f3d5ff] text-[#610361] rounded-lg hover:bg-[#ebbaff] transition text-sm font-winkySans">
-                                            <i className="fa-solid fa-file-pdf mr-1"></i> PDF
-                                        </button>
-                                    </div>
+
+                                    {/* PDF button */}
+                                    <button onClick={() => downloadPDF(order)}
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-winkySans font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm hover:shadow"
+                                        style={{ background: 'linear-gradient(135deg, #f3d5ff, #e9b8ff)', color: '#610361' }}>
+                                        <i className="fa-solid fa-file-pdf"></i>
+                                        Descargar PDF
+                                    </button>
                                 </div>
-                                <div className="text-lg font-semibold text-gray-800 font-winkySans">Total: COP {order.amount}</div>
-                                {order.shopping?.length > 0 && (
-                                    <div className="mt-4 space-y-4 border-t border-gray-100 pt-4">
-                                        {order.shopping.map((item, i) => (
-                                            <div key={i} className="flex items-center gap-4 bg-gray-50 p-3 rounded-lg">
-                                                <Link to={`/product/${item.slug}`} className="flex-shrink-0">
-                                                    <img 
-                                                        src={item.image || '/assets/images/products/product1.jpg'} 
-                                                        alt={item.title} 
-                                                        className="w-16 h-16 object-cover rounded-md border border-gray-200 hover:opacity-80 transition"
-                                                        onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/products/product1.jpg'; }}
-                                                    />
-                                                </Link>
-                                                <div className="flex-1 min-w-0">
-                                                    <Link to={`/product/${item.slug}`} className="text-sm font-semibold text-[#610361] hover:underline truncate block font-winkySans">
-                                                        {item.title}
+
+                                {/* Order body */}
+                                <div className="px-6 pb-6">
+
+                                    {/* Total */}
+                                    <div className="flex items-center justify-between py-4 border-b border-purple-50">
+                                        <span className="text-xs uppercase tracking-widest text-gray-400 font-winkySans">Total del pedido</span>
+                                        <span className="text-xl font-bold text-[#610361] font-winkySans">
+                                            COP {Number(order.amount).toLocaleString('es-CO')}
+                                        </span>
+                                    </div>
+
+                                    {/* Products */}
+                                    {order.shopping?.length > 0 && (
+                                        <div className="mt-4 space-y-3">
+                                            {order.shopping.map((item, i) => (
+                                                <div key={i}
+                                                    className="flex items-center gap-4 p-3 rounded-2xl transition-colors duration-200 hover:bg-purple-50/50 group/item">
+
+                                                    {/* Thumbnail */}
+                                                    <Link to={`/product/${item.slug}`} className="shrink-0">
+                                                        <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-purple-100 shadow-sm group-hover/item:shadow-md transition-shadow duration-200">
+                                                            <img
+                                                                src={item.image || '/assets/images/products/product1.jpg'}
+                                                                alt={item.title}
+                                                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/products/product1.jpg'; }}
+                                                            />
+                                                        </div>
                                                     </Link>
-                                                    <div className="flex gap-2 text-xs text-gray-500 mt-1">
-                                                        {item.size && <span>Talla: {item.size}</span>}
-                                                        {item.color && <span>Color: {item.color}</span>}
+
+                                                    {/* Info */}
+                                                    <div className="flex-1 min-w-0">
+                                                        <Link to={`/product/${item.slug}`}
+                                                            className="text-sm font-semibold text-[#610361] hover:text-[#a21caf] truncate block font-winkySans transition-colors duration-150">
+                                                            {item.title}
+                                                        </Link>
+                                                        <div className="flex flex-wrap gap-2 mt-1">
+                                                            {item.size && (
+                                                                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 font-winkySans">
+                                                                    <i className="fa-solid fa-ruler-horizontal text-[8px]"></i> {item.size}
+                                                                </span>
+                                                            )}
+                                                            {item.color && (
+                                                                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-pink-50 text-pink-600 font-winkySans">
+                                                                    <i className="fa-solid fa-palette text-[8px]"></i> {item.color}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Price & qty */}
+                                                    <div className="text-right shrink-0">
+                                                        <div className="text-xs text-gray-400 font-winkySans mb-0.5">
+                                                            <span className="inline-flex items-center gap-1">
+                                                                <i className="fa-solid fa-xmark text-[10px]"></i>
+                                                                {item.quantity || 1}
+                                                            </span>
+                                                        </div>
+                                                        <div className="text-sm font-bold text-gray-700 font-winkySans">
+                                                            COP {Number(item.price).toLocaleString('es-CO')}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <div className="text-sm font-winkySans">x{item.quantity || 1}</div>
-                                                    <div className="text-sm font-semibold text-gray-800">COP {item.price}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>

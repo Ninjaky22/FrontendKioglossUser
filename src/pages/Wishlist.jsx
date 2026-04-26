@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import authService from '../services/authService';
 import productService from '../services/productService';
 import Breadcrumb from '../components/Breadcrumb';
+import Swal from 'sweetalert2';
 
 export default function Wishlist() {
     const navigate = useNavigate();
@@ -16,9 +17,7 @@ export default function Wishlist() {
     const loadFavorites = useCallback(async () => {
         setLoading(true);
         try {
-            // Fetch fresh user data directly from API (like restaurante_fe getData)
             const userData = await authService.getUserData();
-            // account.favorite can be array, string, or null — guard with Array.isArray
             const rawFavs = userData?.account?.favorite;
             setFavorites(Array.isArray(rawFavs) ? rawFavs : []);
         } catch {
@@ -34,14 +33,66 @@ export default function Wishlist() {
         loadFavorites();
     }, [isAuthenticated, authLoading, navigate, loadFavorites]);
 
-    const handleRemove = async (idFa, productId) => {
+    const handleRemove = async (idFa, productId, productName) => {
         if (!idFa) return;
+
+        const result = await Swal.fire({
+            title: '¿Eliminar de favoritos?',
+            text: `"${productName}" será quitado de tu lista de deseados.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#610361',
+            cancelButtonColor: '#9ca3af',
+            confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            borderRadius: '1rem',
+            customClass: {
+                popup: 'font-winkySans rounded-2xl',
+                title: 'text-[#610361]',
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans'
+            },
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await productService.removeFavorite(idFa);
             setFavorites(prev => prev.filter(f => f.idFa !== idFa));
             removeFavoriteId(productId);
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success',
+                title: 'Eliminado de favoritos',
+                showConfirmButton: false, timer: 2000, timerProgressBar: true,
+                 customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans'
+            }
+            });
         } catch {
-            alert('Error al eliminar de favoritos');
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'error',
+                title: 'Error al eliminar de favoritos',
+                showConfirmButton: false, timer: 3000, timerProgressBar: true,
+                 customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans'
+            }
+            });
             loadFavorites();
         }
     };
@@ -58,7 +109,7 @@ export default function Wishlist() {
     );
 
     return (
-        <div className="bg-[#F7E6FE]">
+        <div className="bg-[#F7E6FE] font-winkySans">
             <Breadcrumb items={[
                 { label: 'Inicio', path: '/', icon: 'fa-solid fa-house text-[#610361]' },
                 { label: 'Lista de Deseados' },
@@ -106,7 +157,7 @@ export default function Wishlist() {
                                     </button>
                                 </div>
                                 <div className="md:col-span-2 text-center">
-                                    <button onClick={() => handleRemove(fav.idFa, fav.id)}
+                                    <button onClick={() => handleRemove(fav.idFa, fav.id, fav.title || fav.name)}
                                         className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-full transition">
                                         <i className="fa-solid fa-trash text-lg"></i>
                                     </button>

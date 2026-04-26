@@ -1,7 +1,23 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import productService from '../services/productService';
+import Swal from 'sweetalert2';
+
+// ── Toast mixin: esquina superior derecha, sin botón de confirmación, fuente winkySans ──
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3500,
+    timerProgressBar: true,
+    customClass: { popup: 'font-winkySans' },
+    didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    },
+});
 
 export default function Header() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -10,17 +26,110 @@ export default function Header() {
     const { cart, cartCount, removeItem } = useCart();
     const [cartOpen, setCartOpen] = useState(false);
 
+    // ── Autocomplete ──
+    const [suggestions, setSuggestions] = useState([]);
+    const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const searchRef = useRef(null);
+
     const cartTotal = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
 
-    const handleSearch = (e) => {
+    // ── Cerrar sugerencias al hacer clic fuera ──
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
+    // ── Debounce: buscar sugerencias al escribir 3+ caracteres ──
+    useEffect(() => {
+        const q = searchQuery.trim();
+        if (q.length < 3) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+        const timer = setTimeout(async () => {
+            setSuggestionsLoading(true);
+            try {
+                const data = await productService.getAllProducts(0, 6, q);
+                // Normalizar distintas formas de respuesta de la API
+                const list = Array.isArray(data) ? data
+                    : Array.isArray(data?.content) ? data.content
+                    : Array.isArray(data?.data) ? data.data
+                    : Array.isArray(data?.products) ? data.products
+                    : [];
+                setSuggestions(list.slice(0, 6));
+                setShowSuggestions(list.length > 0);
+            } catch {
+                setSuggestions([]);
+                setShowSuggestions(false);
+            } finally {
+                setSuggestionsLoading(false);
+            }
+        }, 350);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // ── Buscar con validación ──
+    const handleSearch = (e) => {
         e.preventDefault();
-        navigate(searchQuery.trim() ? `/shop?search=${encodeURIComponent(searchQuery.trim())}` : '/shop');
+        const q = searchQuery.trim();
+
+        if (!q) {
+            Toast.fire({
+                icon: 'info',
+                title: 'Escribe algo para buscar',
+                text: 'El campo de búsqueda está vacío.',
+            });
+            return;
+        }
+        if (q.length < 3) {
+            Toast.fire({
+                icon: 'warning',
+                title: 'Búsqueda muy corta',
+                text: 'Ingresa mínimo 3 caracteres para buscar.',
+            });
+            return;
+        }
+
+        setShowSuggestions(false);
+        navigate(`/shop?search=${encodeURIComponent(q)}`);
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
+    // ── Seleccionar una sugerencia ──
+    const handleSuggestionClick = (productName) => {
+        setSearchQuery(productName);
+        setShowSuggestions(false);
+        navigate(`/shop?search=${encodeURIComponent(productName)}`);
+    };
+
+    // ── Logout (lógica intacta, confirmación requiere botón) ──
+    const handleLogout = async () => {
+        const result = await Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: '¿Estás seguro de que deseas salir de tu cuenta?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-right-from-bracket mr-1"></i> Sí, salir',
+            cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Cancelar',
+            confirmButtonColor: '#610361',
+            cancelButtonColor: '#9ca3af',
+            customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+            },
+        });
+        if (result.isConfirmed) {
+            logout();
+            navigate('/login');
+        }
     };
 
     return (
@@ -29,24 +138,78 @@ export default function Header() {
                 <div className="container flex items-center justify-between">
                     <Link to="/"><img src="/assets/images/logo.png" alt="Logo" className="w-48" /></Link>
 
-                    <div className="w-full max-w-xl relative flex">
-                        <span className="absolute left-4 top-3 text-lg text-gray-400">
+                    {/* ── Barra de búsqueda con autocomplete ── */}
+                    <div className="w-full max-w-xl relative flex" ref={searchRef}>
+                        <span className="absolute left-4 top-3 text-lg text-gray-400 z-10">
                             <i className="fa-solid fa-magnifying-glass"></i>
                         </span>
-                        <input type="text" value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch(e)}
-                            className="w-full border border-gray-200 border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none focus:border-[#9b30a0] hidden md:flex font-winkySans"
-                            placeholder="Buscar productos" />
-                        <button onClick={handleSearch}
-                            className="bg-[#9b30a0] text-white px-8 rounded-r-md md:flex items-center cursor-pointer font-swash hover:bg-[#7b2585] transition">
-                            Buscar
-                        </button>
+                        <div className="flex w-full relative">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch(e)}
+                                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                                className="w-full border border-gray-200 border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none focus:border-[#610361] focus:ring-2 focus:ring-[#610361]/30 hidden md:flex font-winkySans hover:bg-[#FFFF] transition-all"
+                                placeholder="Buscar productos"
+                                autoComplete="off"
+                            />
+                            <button
+                                onClick={handleSearch}
+                                className="bg-[#610361] text-white px-8 rounded-r-md md:flex items-center cursor-pointer font-winkySans hover:bg-[#4a024a] focus:ring-2 focus:ring-[#610361]/30 transition-all"
+                            >
+                                Buscar
+                            </button>
+
+                            {/* ── Dropdown de sugerencias ── */}
+                            {showSuggestions && (
+                                <div className="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden hidden md:block">
+                                    {suggestionsLoading ? (
+                                        <div className="flex items-center gap-2 px-4 py-3 text-sm text-gray-400 font-winkySans">
+                                            <i className="fa-solid fa-spinner animate-spin text-[#610361]"></i>
+                                            Buscando productos...
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <p className="px-4 pt-3 pb-1 text-[0.65rem] font-bold uppercase tracking-widest text-gray-300 font-winkySans">
+                                                Sugerencias
+                                            </p>
+                                            {suggestions.map((product) => (
+                                                <button
+                                                    key={product.id || product._id}
+                                                    onMouseDown={() => handleSuggestionClick(product.title)}
+                                                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#faf0fa] transition text-left group"
+                                                >
+                                                    <div className="w-7 h-7 rounded-lg bg-[#f3e6f3] flex items-center justify-center shrink-0">
+                                                        <i className="fa-solid fa-magnifying-glass text-[#610361] text-xs"></i>
+                                                    </div>
+                                                    <span className="text-sm text-gray-700 font-winkySans group-hover:text-[#610361] transition truncate">
+                                                        {product.title}
+                                                    </span>
+                                                    <i className="fa-solid fa-arrow-up-left text-gray-200 group-hover:text-[#610361] text-xs ml-auto transition"></i>
+                                                </button>
+                                            ))}
+                                            <button
+                                                onMouseDown={() => handleSuggestionClick(searchQuery.trim())}
+                                                className="w-full flex items-center gap-3 px-4 py-3 border-t border-gray-50 hover:bg-[#faf0fa] transition text-left group"
+                                            >
+                                                <div className="w-7 h-7 rounded-lg bg-[#610361] flex items-center justify-center shrink-0">
+                                                    <i className="fa-solid fa-magnifying-glass text-white text-xs"></i>
+                                                </div>
+                                                <span className="text-sm font-medium text-[#610361] font-winkySans truncate">
+                                                    Ver todos los resultados de &ldquo;{searchQuery.trim()}&rdquo;
+                                                </span>
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex items-center space-x-5">
                         {isAuthenticated && (
-                            <Link to="/wishlist" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-swash">
+                            <Link to="/wishlist" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
                                 <div className="text-2xl"><i className="fa-regular fa-heart"></i></div>
                                 <div className="text-xs leading-3">Deseados</div>
                             </Link>
@@ -54,11 +217,11 @@ export default function Header() {
                         <div className="relative"
                             onMouseEnter={() => setCartOpen(true)}
                             onMouseLeave={() => setCartOpen(false)}>
-                            <Link to="/cart" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-swash block">
+                            <Link to="/cart" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium block">
                                 <div className="text-2xl relative inline-block">
                                     <i className="fa-solid fa-bag-shopping"></i>
                                     {cartCount > 0 && (
-                                        <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold w-[20px] h-[20px] rounded-full flex items-center justify-center leading-none ring-2 ring-white">
+                                        <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[15px]  w-5 h-5 rounded-full flex items-center justify-center leading-none ring-2 ring-white">
                                             {cartCount > 9 ? '9+' : cartCount}
                                         </span>
                                     )}
@@ -70,7 +233,7 @@ export default function Header() {
                             {cartOpen && (
                                 <div className="absolute right-0 top-full mt-1 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
                                     {cart.length === 0 ? (
-                                        <div className="p-6 text-center text-gray-400 font-winkySans">
+                                        <div className="p-6 text-center text-gray-400 font-winkySans font-medium">
                                             <i className="fa-solid fa-cart-shopping text-3xl mb-2"></i>
                                             <p className="text-sm">Tu carrito está vacío</p>
                                         </div>
@@ -80,14 +243,14 @@ export default function Header() {
                                                 {cart.slice(0, 5).map(item => (
                                                     <div key={item.id} className="flex items-center gap-3 p-3 hover:bg-gray-50 transition">
                                                         <img src={item.image || '/assets/images/products/product1.jpg'} alt={item.name}
-                                                            className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                                                            className="w-12 h-12 rounded-lg object-cover shrink-0"
                                                             onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/products/product1.jpg'; }} />
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-sm text-gray-800 font-winkySans truncate">{item.name}</p>
-                                                            <p className="text-xs text-gray-400 font-winkySans">{item.quantity} × COP {Number(item.price).toLocaleString()}</p>
+                                                            <p className="text-sm text-gray-800 font-winkySans font-medium truncate">{item.name}</p>
+                                                            <p className="text-xs text-gray-400 font-winkySans font-medium">{item.quantity} × COP {Number(item.price).toLocaleString()}</p>
                                                         </div>
                                                         <button onClick={(e) => { e.preventDefault(); removeItem(item); }}
-                                                            className="text-gray-300 hover:text-red-500 transition p-1 flex-shrink-0">
+                                                            className="text-gray-300 hover:text-red-500 transition p-1 shrink-0">
                                                             <i className="fa-solid fa-xmark"></i>
                                                         </button>
                                                     </div>
@@ -112,12 +275,12 @@ export default function Header() {
                             )}
                         </div>
                         {isAuthenticated ? (
-                            <Link to="/account" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-swash">
+                            <Link to="/account" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
                                 <div className="text-2xl"><i className="fa-regular fa-user"></i></div>
                                 <div className="text-xs leading-3">Cuenta</div>
                             </Link>
                         ) : (
-                            <Link to="/login" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-swash">
+                            <Link to="/login" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
                                 <div className="text-2xl"><i className="fa-solid fa-right-to-bracket"></i></div>
                                 <div className="text-xs leading-3">Ingresar</div>
                             </Link>
@@ -130,18 +293,18 @@ export default function Header() {
                 <div className="container flex">
                     <div className="flex items-center justify-between grow md:pl-12 py-4 text-lg">
                         <div className="flex items-center space-x-6 capitalize">
-                            <Link to="/" className="text-white/80 hover:text-white hover:-translate-y-0.5 transition-all duration-300 font-swash">Inicio</Link>
-                            <Link to="/shop" className="text-white/80 hover:text-white hover:-translate-y-0.5 transition-all duration-300 font-swash">Productos</Link>
-                            <Link to="/about" className="text-white/80 hover:text-white hover:-translate-y-0.5 transition-all duration-300 font-swash">Sobre Nosotros</Link>
-                            <Link to="/contact" className="text-white/80 hover:text-white hover:-translate-y-0.5 transition-all duration-300 font-swash">Contáctanos</Link>
+                            <Link to="/" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Inicio</Link>
+                            <Link to="/shop" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Productos</Link>
+                            <Link to="/about" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Sobre Nosotros</Link>
+                            <Link to="/contact" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Contáctanos</Link>
                         </div>
                         {isAuthenticated ? (
                             <button onClick={handleLogout}
-                                className="text-white/80 hover:text-white hover:-translate-y-0.5 transition-all duration-300 font-swash cursor-pointer">
+                                className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium cursor-pointer">
                                 Cerrar Sesión
                             </button>
                         ) : (
-                            <Link to="/login" className="text-white/80 hover:text-white hover:-translate-y-0.5 transition-all duration-300 font-swash">Iniciar Sesión</Link>
+                            <Link to="/login" className="text-white hover:text-white/80 hover:-translate-y-0.5 transition-all duration-300 font-winkySans font-medium">Iniciar Sesión</Link>
                         )}
                     </div>
                 </div>

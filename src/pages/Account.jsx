@@ -10,15 +10,14 @@ export default function Account() {
     const { isAuthenticated, user, logout, refreshUser, loading: authLoading } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
-    const [message, setMessage] = useState({ text: '', type: '' });
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [savingProfile, setSavingProfile] = useState(false);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (authLoading) return;
         if (!isAuthenticated) { navigate('/login'); return; }
         if (!user) {
-            // Token exists but user data not loaded — try to refresh
             refreshUser().then(data => {
                 if (!data) navigate('/login');
             });
@@ -34,10 +33,28 @@ export default function Account() {
         });
     }, [isAuthenticated, user, authLoading, navigate, refreshUser]);
 
-    const handleLogout = () => { logout(); navigate('/login'); };
+    const handleLogout = async () => {
+        const result = await Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: '¿Estás seguro de que deseas salir de tu cuenta?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-right-from-bracket mr-1"></i> Sí, salir',
+            cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Cancelar',
+            confirmButtonColor: '#610361',
+            cancelButtonColor: '#9ca3af',
+            customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+            },
+        });
+        if (result.isConfirmed) { logout(); navigate('/login'); }
+    };
 
     const handleSave = async () => {
-        setMessage({ text: '', type: '' });
+        setSavingProfile(true);
         try {
             await authService.updateUser({
                 name: formData.name,
@@ -48,20 +65,46 @@ export default function Account() {
                     distric: formData.distric,
                 },
             });
-            setMessage({ text: 'Perfil actualizado correctamente', type: 'success' });
             setIsEditing(false);
             refreshUser();
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success',
+                title: 'Perfil actualizado correctamente',
+                showConfirmButton: false, timer: 2500, timerProgressBar: true,
+                 customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+            }
+            });
         } catch {
-            setMessage({ text: 'Error al actualizar el perfil', type: 'error' });
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'error',
+                title: 'Error al actualizar el perfil',
+                showConfirmButton: false, timer: 3000, timerProgressBar: true,
+                 customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+            }
+            });
+        } finally {
+            setSavingProfile(false);
         }
-        setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     };
 
     const handleImageUpload = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
         if (!file.type.startsWith('image/')) {
-            Swal.fire({ icon: 'error', title: 'Archivo no válido', text: 'Selecciona una imagen', timer: 2000, showConfirmButton: false });
+            Swal.fire({ icon: 'error', title: 'Archivo no válido', text: 'Selecciona una imagen', timer: 2000, showConfirmButton: false,  customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+            } });
             return;
         }
         setUploadingImage(true);
@@ -88,7 +131,7 @@ export default function Account() {
     );
 
     return (
-        <div className="bg-[#F7E6FE]">
+        <div className="bg-[#F7E6FE] font-winkySans">
             <Breadcrumb items={[
                 { label: 'Inicio', path: '/', icon: 'fa-solid fa-house text-[#610361]' },
                 { label: 'Mi Cuenta' },
@@ -107,7 +150,7 @@ export default function Account() {
                                         className="w-full h-full object-cover"
                                         onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; e.target.parentElement.querySelector('.fallback')?.classList.remove('hidden'); }} />
                                 ) : null}
-                                <div className={`fallback w-full h-full rounded-full bg-gradient-to-r from-[#610361] to-[#a84aa7] flex items-center justify-center text-white text-3xl font-bold ${user.profileImage ? 'hidden' : ''}`}>
+                                <div className={`fallback w-full h-full rounded-full bg-linear-to-r bg-[#610361] flex items-center justify-center text-white text-3xl font-bold ${user.profileImage ? 'hidden' : ''}`}>
                                     {user.name?.charAt(0)?.toUpperCase() || 'U'}
                                 </div>
                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
@@ -122,26 +165,42 @@ export default function Account() {
                             <p className="text-gray-500 text-sm">{user.email}</p>
                         </div>
                         <div className="mt-6 space-y-2">
-                            <Link to="/account" className="block w-full text-left px-4 py-2 text-[#610361] bg-[#f3d5ff] rounded font-medium font-winkySans"><i className="fa-regular fa-user mr-2"></i>Mi Perfil</Link>
-                            <Link to="/orders" className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-[#f3d5ff] rounded transition font-winkySans"><i className="fa-solid fa-box mr-2"></i>Mis Pedidos</Link>
-                            <Link to="/wishlist" className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-[#f3d5ff] rounded transition font-winkySans"><i className="fa-regular fa-heart mr-2"></i>Lista de Deseados</Link>
-                            <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 rounded transition font-winkySans"><i className="fa-solid fa-right-from-bracket mr-2"></i>Cerrar sesión</button>
+                            <Link to="/account" className="block w-full text-left px-4 py-2 text-[#610361] bg-[#f3d5ff] rounded font-medium"><i className="fa-regular fa-user mr-2"></i>Mi Perfil</Link>
+                            <Link to="/orders" className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-[#f3d5ff] rounded transition"><i className="fa-solid fa-box mr-2"></i>Mis Pedidos</Link>
+                            <Link to="/wishlist" className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-[#f3d5ff] rounded transition"><i className="fa-regular fa-heart mr-2"></i>Lista de Deseados</Link>
+                            <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 rounded transition"><i className="fa-solid fa-right-from-bracket mr-2"></i>Cerrar sesión</button>
                         </div>
                     </div>
                     <div className="md:col-span-3 bg-white rounded-xl shadow p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold text-[#610361] font-winkySans">Mi Perfil</h2>
-                            <button onClick={() => setIsEditing(!isEditing)}
+                            <button onClick={async () => {
+                                if (isEditing) {
+                                    const result = await Swal.fire({
+                                        title: '¿Cancelar edición?',
+                                        text: 'Los cambios que no hayas guardado se perderán.',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Sí, descartar',
+                                        cancelButtonText: '<i class="fa-solid fa-pen mr-1"></i> Seguir editando',
+                                        confirmButtonColor: '#dc2626',
+                                        cancelButtonColor: '#610361',
+                                        customClass: {
+                                            title: 'font-winkySans',
+                                            htmlContainer: 'font-winkySans',
+                                            confirmButton: 'font-winkySans',
+                                            cancelButton: 'font-winkySans',
+                                        },
+                                    });
+                                    if (!result.isConfirmed) return;
+                                }
+                                setIsEditing(!isEditing);
+                            }}
                                 className="px-4 py-2 bg-[#f3d5ff] text-[#610361] rounded-lg hover:bg-[#ebbaff] transition font-winkySans">
                                 <i className={`fa-solid ${isEditing ? 'fa-xmark' : 'fa-pen-to-square'} mr-1`}></i>
                                 {isEditing ? 'Cancelar' : 'Editar'}
                             </button>
                         </div>
-                        {message.text && (
-                            <div className={`mb-4 p-3 rounded text-sm ${message.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-                                {message.text}
-                            </div>
-                        )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="text-sm text-gray-500 font-winkySans">Nombre</label>
@@ -202,9 +261,12 @@ export default function Account() {
                         </div>
                         {isEditing && (
                             <div className="mt-6">
-                                <button onClick={handleSave}
-                                    className="px-8 py-2.5 bg-[#610361] text-white rounded-lg hover:bg-[#500250] transition font-winkySans">
-                                    Guardar Cambios
+                                <button onClick={handleSave} disabled={savingProfile}
+                                    className="px-8 py-2.5 bg-[#610361] text-white rounded-lg hover:bg-[#500250] transition font-winkySans disabled:opacity-60 disabled:cursor-not-allowed">
+                                    {savingProfile
+                                        ? <><i className="fa-solid fa-spinner fa-spin mr-2"></i>Guardando...</>
+                                        : <><i className="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios</>
+                                    }
                                 </button>
                             </div>
                         )}

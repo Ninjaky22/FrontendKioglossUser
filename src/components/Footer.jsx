@@ -6,16 +6,16 @@ export default function Footer() {
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-12 pb-10">
                         <div className="col-span-1 space-y-4">
                             <img src="/assets/images/logo.png" alt="logo" className="w-48 brightness-200" />
-                            <p className="text-white/70 font-swash text-lg">Tu belleza, amplificada.</p>
-                            <div className="flex space-x-5">
+                            <p className="text-white/70 font-winkySans font-medium text-lg">Tu belleza, amplificada.</p>
+                            <div className="flex space-x-10 ">
                                 <a href="https://www.tiktok.com/@kiogloss" className="text-white/70 hover:text-white hover:-translate-y-1 transition-all duration-300" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-tiktok text-2xl"></i></a>
                                 <a href="https://www.instagram.com/kio_gloss/?hl=es" className="text-white/70 hover:text-white hover:-translate-y-1 transition-all duration-300" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-instagram text-2xl"></i></a>
                                 <a href="https://api.whatsapp.com/message/X7QVYQOJXRFUA1?autoload=1&app_absent=0" className="text-white/70 hover:text-white hover:-translate-y-1 transition-all duration-300" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-whatsapp text-2xl"></i></a>
                             </div>
                         </div>
                         <div className="col-span-1">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-surfer">Redirecciones</h3>
-                            <div className="mt-4 space-y-3">
+                            <h3 className="text-xl font-semibold text-white uppercase tracking-wider font-winkySans">Redirecciones</h3>
+                            <div className="mt-2 space-y-2">
                                 <a href="/" className="text-lg text-white/70 hover:text-white hover:translate-x-1 transition-all duration-300 block font-winkySans">Inicio</a>
                                 <a href="/shop" className="text-lg text-white/70 hover:text-white hover:translate-x-1 transition-all duration-300 block font-winkySans">Productos</a>
                                 <a href="/wishlist" className="text-lg text-white/70 hover:text-white hover:translate-x-1 transition-all duration-300 block font-winkySans">Lista de deseos</a>
@@ -25,16 +25,16 @@ export default function Footer() {
                             </div>
                         </div>
                         <div className="col-span-1">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-surfer">Tu cuenta</h3>
-                            <div className="mt-4 space-y-3">
+                            <h3 className="text-xl font-semibold text-white uppercase tracking-wider font-winkySans">Tu cuenta</h3>
+                            <div className="mt-2 space-y-2">
                                 <a href="/login" className="text-lg text-white/70 hover:text-white hover:translate-x-1 transition-all duration-300 block font-winkySans">Inicia Sesión</a>
                                 <a href="/register" className="text-lg text-white/70 hover:text-white hover:translate-x-1 transition-all duration-300 block font-winkySans">Registrate</a>
                                 <a href="/account" className="text-lg text-white/70 hover:text-white hover:translate-x-1 transition-all duration-300 block font-winkySans">Cuenta</a>
                             </div>
                         </div>
                         <div className="col-span-1">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-surfer">Información</h3>
-                            <div className="mt-4 space-y-3">
+                            <h3 className="text-xl font-semibold text-white uppercase tracking-wider font-winkySans">Información</h3>
+                            <div className="mt-2 space-y-2">
                                 <span className="text-lg text-white/70 block font-winkySans"><i className="fa-solid fa-location-dot mr-2"></i>Campestre D mz 12 Casa 24</span>
                                 <span className="text-lg text-white/70 block font-winkySans"><i className="fa-regular fa-clock mr-2"></i>Lunes a Domingo de 9 am a 7 pm</span>
                             </div>

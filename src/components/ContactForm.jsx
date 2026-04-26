@@ -1,63 +1,191 @@
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 export default function ContactForm() {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [asunto, setAsunto] = useState('');
     const [mensaje, setMensaje] = useState('');
-    const [successMsg, setSuccessMsg] = useState('');
-    const [errorMsg, setErrorMsg] = useState('');
 
     const DESTINATION_EMAIL = 'casanovacristian40@gmail.com';
 
+    // ── Límites de caracteres ──
+    const LIMITS = {
+        nombre:  { min: 3,  max: 50  },
+        asunto:  { min: 5,  max: 80  },
+        mensaje: { min: 20, max: 500 },
+    };
+
+    const toast = (icon, title, text = '') => Swal.fire({
+        toast: true, position: 'top-end', icon, title,
+        text: text || undefined,
+        showConfirmButton: false,
+        timer: 3000, timerProgressBar: true,
+    });
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        setSuccessMsg(''); setErrorMsg('');
+
         if (!nombre.trim() || !email.trim() || !asunto.trim() || !mensaje.trim()) {
-            setErrorMsg('Por favor completa todos los campos.');
+            toast('warning', 'Completa todos los campos');
             return;
         }
+        if (nombre.trim().length < LIMITS.nombre.min) {
+            toast('warning', 'Nombre muy corto', `Mínimo ${LIMITS.nombre.min} caracteres`);
+            return;
+        }
+        if (asunto.trim().length < LIMITS.asunto.min) {
+            toast('warning', 'Asunto muy corto', `Mínimo ${LIMITS.asunto.min} caracteres`);
+            return;
+        }
+        if (mensaje.trim().length < LIMITS.mensaje.min) {
+            toast('warning', 'Mensaje muy corto', `Escribe al menos ${LIMITS.mensaje.min} caracteres`);
+            return;
+        }
+
         const body = encodeURIComponent(`Hola, mi nombre es ${nombre}.\n\n${mensaje}\n\nMi correo es: ${email}`);
         const subject = encodeURIComponent(asunto);
         window.open(`mailto:${DESTINATION_EMAIL}?subject=${subject}&body=${body}`, '_blank');
-        setSuccessMsg('¡Mensaje listo! Se abrió tu cliente de correo.');
+
+        toast('success', '¡Mensaje listo!', 'Se abrió tu cliente de correo');
         setNombre(''); setEmail(''); setAsunto(''); setMensaje('');
     };
 
+    // ── Contador de caracteres ──
+    const CharCount = ({ value, min, max }) => {
+        const len = value.length;
+        const tooShort = len > 0 && len < min;
+        const nearMax  = len >= max * 0.85;
+        const atMax    = len >= max;
+        return (
+            <span className={`text-[10px] font-winkySans tabular-nums transition-colors ${
+                atMax    ? 'text-red-500 font-bold' :
+                nearMax  ? 'text-amber-500' :
+                tooShort ? 'text-red-400' :
+                           'text-gray-300'
+            }`}>
+                {len}/{max}
+            </span>
+        );
+    };
+
     return (
-        <div className="flex justify-center py-12 px-4">
+        <div className="min-h-screen bg-linear-to-b flex items-center justify-center py-4 px-4 font-winkySans">
             <div className="w-full max-w-lg">
-                <div className="bg-white rounded-xl shadow-2xl border-2 border-[#a84aa7] overflow-hidden">
-                    <div className="bg-[#a84aa7] px-6 py-6">
-                        <h2 className="text-3xl font-extrabold text-white text-center">Contáctanos</h2>
-                        <p className="text-pink-100 mt-2 text-center">¡Estamos aquí para ayudarte!</p>
+
+                <div className="bg-white rounded-3xl shadow-xl border border-purple-100 overflow-hidden">
+
+                    {/* Header */}
+                    <div className="relative bg-[#610361] px-8 py-8 overflow-hidden">
+                        <div className="absolute -top-6 -right-6 w-28 h-28 bg-white/10 rounded-full"></div>
+                        <div className="absolute -bottom-8 -left-4 w-20 h-20 bg-white/10 rounded-full"></div>
+                        <div className="relative flex flex-col items-center gap-2">
+                            <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-1">
+                                <i className="fa-solid fa-envelope text-white text-xl"></i>
+                            </div>
+                            <h2 className="text-3xl font-bold text-white font-winkySans tracking-tight">Contáctanos</h2>
+                            <p className="text-purple-200 text-sm">¡Estamos aquí para ayudarte!</p>
+                        </div>
                     </div>
-                    <div className="p-6">
-                        {successMsg && <div className="mb-6 p-4 rounded-lg text-green-800 bg-green-100 border border-green-300">{successMsg}</div>}
-                        {errorMsg && <div className="mb-6 p-4 rounded-lg text-red-800 bg-red-100 border border-red-300">{errorMsg}</div>}
-                        <form onSubmit={handleSubmit} className="space-y-6">
+
+                    {/* Body */}
+                    <div className="px-8 py-8">
+                        <form onSubmit={handleSubmit} className="space-y-5">
+
+                            {/* Nombre */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre *</label>
-                                <input type="text" value={nombre} onChange={e => setNombre(e.target.value)} required
-                                    className="w-full px-4 py-2 rounded-lg border border-[#e6c0e6] focus:ring-2 focus:ring-[#d78ac7] focus:border-[#d78ac7]" placeholder="Tu nombre" />
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">Nombre</label>
+                                    <CharCount value={nombre} min={LIMITS.nombre.min} max={LIMITS.nombre.max} />
+                                </div>
+                                <div className="relative">
+                                    <i className="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-sm pointer-events-none"></i>
+                                    <input
+                                        type="text" value={nombre}
+                                        onChange={e => e.target.value.length <= LIMITS.nombre.max && setNombre(e.target.value)}
+                                        required
+                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-purple-100 bg-purple-50/40 text-gray-700 text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] transition-all"
+                                        placeholder={`Tu nombre completo (mín. ${LIMITS.nombre.min} caracteres)`}
+                                    />
+                                </div>
+                                {nombre.length > 0 && nombre.trim().length < LIMITS.nombre.min && (
+                                    <p className="text-[10px] text-red-400 mt-1 pl-1 flex items-center gap-1">
+                                        <i className="fa-solid fa-circle-exclamation text-[9px]"></i>
+                                        Mínimo {LIMITS.nombre.min} caracteres
+                                    </p>
+                                )}
                             </div>
+
+                            {/* Email */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1">Email *</label>
-                                <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                                    className="w-full px-4 py-2 rounded-lg border border-[#e6c0e6] focus:ring-2 focus:ring-[#d78ac7] focus:border-[#d78ac7]" placeholder="ejemplo@dominio.com" />
+                                <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-1.5">Email</label>
+                                <div className="relative">
+                                    <i className="fa-solid fa-at absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-sm pointer-events-none"></i>
+                                    <input
+                                        type="email" value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        required
+                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-purple-100 bg-purple-50/40 text-gray-700 text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] transition-all"
+                                        placeholder="ejemplo@dominio.com"
+                                    />
+                                </div>
                             </div>
+
+                            {/* Asunto */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1">Asunto *</label>
-                                <input type="text" value={asunto} onChange={e => setAsunto(e.target.value)} required
-                                    className="w-full px-4 py-2 rounded-lg border border-[#e6c0e6] focus:ring-2 focus:ring-[#d78ac7] focus:border-[#d78ac7]" placeholder="Consulta, colaboración..." />
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">Asunto</label>
+                                    <CharCount value={asunto} min={LIMITS.asunto.min} max={LIMITS.asunto.max} />
+                                </div>
+                                <div className="relative">
+                                    <i className="fa-solid fa-tag absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-sm pointer-events-none"></i>
+                                    <input
+                                        type="text" value={asunto}
+                                        onChange={e => e.target.value.length <= LIMITS.asunto.max && setAsunto(e.target.value)}
+                                        required
+                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-purple-100 bg-purple-50/40 text-gray-700 text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] transition-all"
+                                        placeholder={`Consulta, colaboración... (mín. ${LIMITS.asunto.min} caracteres)`}
+                                    />
+                                </div>
+                                {asunto.length > 0 && asunto.trim().length < LIMITS.asunto.min && (
+                                    <p className="text-[10px] text-red-400 mt-1 pl-1 flex items-center gap-1">
+                                        <i className="fa-solid fa-circle-exclamation text-[9px]"></i>
+                                        Mínimo {LIMITS.asunto.min} caracteres
+                                    </p>
+                                )}
                             </div>
+
+                            {/* Mensaje */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1">Mensaje *</label>
-                                <textarea value={mensaje} onChange={e => setMensaje(e.target.value)} rows={5} required
-                                    className="w-full px-4 py-2 rounded-lg border border-[#e6c0e6] focus:ring-2 focus:ring-[#d78ac7] focus:border-[#d78ac7]" placeholder="Describe tu consulta..." />
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">Mensaje</label>
+                                    <CharCount value={mensaje} min={LIMITS.mensaje.min} max={LIMITS.mensaje.max} />
+                                </div>
+                                <div className="relative">
+                                    <i className="fa-solid fa-comment-dots absolute left-3.5 top-3.5 text-purple-400 text-sm pointer-events-none"></i>
+                                    <textarea
+                                        value={mensaje}
+                                        onChange={e => e.target.value.length <= LIMITS.mensaje.max && setMensaje(e.target.value)}
+                                        rows={5} required
+                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-purple-100 bg-purple-50/40 text-gray-700 text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] transition-all resize-none"
+                                        placeholder={`Describe tu consulta... (mín. ${LIMITS.mensaje.min} caracteres)`}
+                                    />
+                                </div>
+                                {mensaje.length > 0 && mensaje.trim().length < LIMITS.mensaje.min && (
+                                    <p className="text-[10px] text-red-400 mt-1 pl-1 flex items-center gap-1">
+                                        <i className="fa-solid fa-circle-exclamation text-[9px]"></i>
+                                        Faltan {LIMITS.mensaje.min - mensaje.trim().length} caracteres más
+                                    </p>
+                                )}
                             </div>
-                            <button type="submit" className="w-full py-3 rounded-lg bg-[#a84aa7] hover:bg-[#8e398d] text-white text-lg font-bold shadow-md transition">
-                                ENVIAR MENSAJE
+
+                            {/* Submit */}
+                            <button
+                                type="submit"
+                                className="w-full py-3.5 rounded-xl bg-[#9b30a0] hover:bg-[#7b2585] text-white font-bold text-sm tracking-wide shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
+                            >
+                                <i className="fa-solid fa-paper-plane text-sm"></i>
+                                Enviar mensaje
                             </button>
                         </form>
                     </div>

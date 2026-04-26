@@ -29,40 +29,151 @@ export default function Sidebar({ onFilterChange, selectedTags = [] }) {
     };
 
     return (
-        <div className="col-span-1 bg-white px-4 pb-6 shadow rounded overflow-hidden hidden md:block">
-            <div className="divide-y divide-gray-200 space-y-5">
-                {selected.length > 0 && (
-                    <div className="pt-4">
-                        <button onClick={clear}
-                            className="w-full py-2 px-4 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition text-sm font-winkySans">
-                            Limpiar filtros
-                        </button>
+        <div className="col-span-1 hidden md:block">
+            <style>{`
+                .sidebar-tag-check { display: none; }
+                .sidebar-tag-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px 12px;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    transition: background 0.18s, color 0.18s;
+                    font-family: 'Winky Sans', sans-serif;
+                    color: #4b5563;
+                    font-size: 0.95rem;
+                    user-select: none;
+                    border: 1.5px solid transparent;
+                }
+                .sidebar-tag-label:hover {
+                    background: #f3d5ff;
+                    color: #610361;
+                    border-color: #e6affc;
+                }
+                .sidebar-tag-check:checked + .sidebar-tag-label {
+                    background: linear-gradient(135deg, #f3d5ff 0%, #ead5fb 100%);
+                    color: #610361;
+                    font-weight: 600;
+                    border-color: #c97de0;
+                }
+                .sidebar-tag-indicator {
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 5px;
+                    border: 2px solid #d1bfe8;
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    transition: all 0.18s;
+                }
+                .sidebar-tag-check:checked + .sidebar-tag-label .sidebar-tag-indicator {
+                    background: #610361;
+                    border-color: #610361;
+                }
+                .sidebar-tag-check:checked + .sidebar-tag-label .sidebar-tag-indicator::after {
+                    content: '';
+                    display: block;
+                    width: 5px;
+                    height: 9px;
+                    border: 2px solid white;
+                    border-top: none;
+                    border-left: none;
+                    transform: rotate(45deg) translateY(-1px);
+                }
+                .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+                .sidebar-scroll::-webkit-scrollbar-track { background: #f3e8ff; border-radius: 4px; }
+                .sidebar-scroll::-webkit-scrollbar-thumb { background: #c97de0; border-radius: 4px; }
+                .clear-btn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px;
+                    width: 100%;
+                    padding: 8px 16px;
+                    background: white;
+                    color: #610361;
+                    border: 1.5px solid #e6affc;
+                    border-radius: 10px;
+                    font-family: 'Winky Sans', sans-serif;
+                    font-size: 0.875rem;
+                    cursor: pointer;
+                    transition: all 0.18s;
+                }
+                .clear-btn:hover {
+                    background: #fce4ff;
+                    border-color: #c97de0;
+                }
+            `}</style>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-[#f0d6fb] overflow-hidden">
+                {/* Header */}
+                <div className="bg-linear-to-r bg-[#610361] px-5 py-4">
+                    <div className="flex items-center gap-2">
+                        <i className="fa-solid fa-sliders text-white/80 text-sm"></i>
+                        <h3 className="text-white font-bold text-base uppercase tracking-widest font-winkySans">
+                            Filtros
+                        </h3>
                     </div>
-                )}
-                <div>
-                    <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium font-winkySans">Categorías</h3>
-                    {loading ? (
-                        <div className="animate-pulse space-y-2">
-                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+
+                <div className="px-4 pb-5 pt-4 space-y-4">
+
+                    {/* Categorías */}
+                    <div>
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-bold text-[#610361] uppercase tracking-widest font-winkySans">
+                                Categorías
+                            </span>
+                            {selected.length > 0 && (
+                                <span className="bg-[#610361] text-white text-[11px] font-bold font-winkySans px-2 py-0.5 rounded-full">
+                                    {selected.length}
+                                </span>
+                            )}
                         </div>
-                    ) : tags.length > 0 ? (
-                        <div className="space-y-2 max-h-64 overflow-y-auto">
-                            {tags.map(tag => (
-                                <div key={tag.id} className="flex items-center">
-                                    <input type="checkbox" id={`tag-${tag.id}`}
-                                        checked={selected.includes(tag.id)}
-                                        onChange={() => toggle(tag.id)}
-                                        className="text-[#610361] focus:ring-[#610361] rounded-sm cursor-pointer" />
-                                    <label htmlFor={`tag-${tag.id}`}
-                                        className="text-gray-600 ml-3 cursor-pointer capitalize font-winkySans">
-                                        {tag.name || tag.slug}
-                                    </label>
-                                </div>
-                            ))}
+
+                        {loading ? (
+                            <div className="space-y-2 animate-pulse">
+                                {[...Array(5)].map((_, i) => (
+                                    <div key={i} className="h-9 bg-[#f3e8ff] rounded-xl" style={{ width: `${70 + i * 5}%` }}></div>
+                                ))}
+                            </div>
+                        ) : tags.length > 0 ? (
+                            <div className="space-y-1 max-h-64 overflow-y-auto sidebar-scroll pr-1">
+                                {tags.map(tag => (
+                                    <div key={tag.id}>
+                                        <input
+                                            type="checkbox"
+                                            id={`tag-${tag.id}`}
+                                            className="sidebar-tag-check"
+                                            checked={selected.includes(tag.id)}
+                                            onChange={() => toggle(tag.id)}
+                                        />
+                                        <label htmlFor={`tag-${tag.id}`} className="sidebar-tag-label">
+                                            <span className="sidebar-tag-indicator"></span>
+                                            <span className="capitalize">{tag.name || tag.slug}</span>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-400 text-sm font-winkySans text-center py-4">
+                                <i className="fa-solid fa-tag mr-1 opacity-40"></i>
+                                No hay categorías disponibles
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Limpiar filtros */}
+                    {selected.length > 0 && (
+                        <div className="pt-1 border-t border-[#f0d6fb]">
+                            <button onClick={clear} className="clear-btn">
+                                <i className="fa-solid fa-filter-circle-xmark text-xs"></i>
+                                Limpiar filtros
+                            </button>
                         </div>
-                    ) : (
-                        <p className="text-gray-500 text-sm font-winkySans">No hay categorías disponibles</p>
                     )}
                 </div>
             </div>

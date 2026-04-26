@@ -34,9 +34,11 @@ export default function VideoReelCard({ video, onVideoClick }) {
     const isDirect = parsed?.platform === 'direct';
 
     return (
-        <div className="w-[280px] md:w-[300px] flex-shrink-0 snap-start">
+        <div className="w-[260px] md:w-[280px] shrink-0 snap-start font-winkySans">
+
+            {/* ── Video card ── */}
             <div
-                className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-gray-900 group cursor-pointer shadow-lg hover:shadow-2xl transition-shadow"
+                className="relative aspect-9/16 rounded-3xl overflow-hidden bg-gray-900 group cursor-pointer shadow-md hover:shadow-2xl hover:shadow-[#61036130] hover:-translate-y-1 transition-all duration-300"
                 onClick={onVideoClick}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
@@ -71,50 +73,62 @@ export default function VideoReelCard({ video, onVideoClick }) {
                     )
                 )}
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none z-10" />
+                {/* Gradient overlay más pronunciado abajo */}
+                <div className="absolute inset-0 bg-linear-to-t from-[#000000]/80 via-black/10 to-transparent pointer-events-none z-10" />
 
-                {/* Play icon */}
+                {/* Borde sutil en hover */}
+                <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-[#9b30a0]/60 transition-all duration-300 z-20 pointer-events-none" />
+
+                {/* Play button central */}
                 {parsed && (
                     <div className="absolute inset-0 flex items-center justify-center z-10">
-                        <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <Play size={24} className="text-white ml-1" fill="white" />
+                        <div className="w-16 h-16 bg-white/15 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300">
+                            <Play size={26} className="text-white ml-1" fill="white" />
                         </div>
                     </div>
                 )}
 
-                {/* Username */}
-                <div className="absolute bottom-4 left-4 right-16 z-20 pointer-events-none">
-                    <span className="text-white text-sm font-medium drop-shadow-lg">{video.username}</span>
+                {/* Username badge */}
+                <div className="absolute bottom-4 left-4 z-20 pointer-events-none">
+                    <span className="inline-flex items-center gap-1.5 bg-black/30 backdrop-blur-sm text-white text-xs font-winkySans font-semibold px-2.5 py-1.5 rounded-full border border-white/10">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#e6affc] inline-block"></span>
+                        {video.username}
+                    </span>
                 </div>
 
-                {/* Play indicator */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20 pointer-events-none">
-                    <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                        <Play size={14} className="text-white ml-0.5" fill="white" />
+                {/* Play indicator esquina */}
+                <div className="absolute bottom-4 right-4 z-20 pointer-events-none">
+                    <div className="w-9 h-9 bg-[#610361]/70 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20 group-hover:bg-[#9b30a0] transition-colors duration-300">
+                        <Play size={13} className="text-white ml-0.5" fill="white" />
                     </div>
                 </div>
             </div>
 
-            {/* Product Info */}
+            {/* ── Producto asociado ── */}
             {video.productTitle && (
                 <Link
                     to={`/product/${video.productSlug}`}
-                    className="flex items-start gap-3 mt-4 px-1 cursor-pointer hover:bg-gray-50 rounded-lg p-2 -mx-1 transition-colors"
+                    className="flex items-center gap-3 mt-3.5 px-2 py-2.5 rounded-2xl hover:bg-[#f5eaff] border border-transparent hover:border-[#e8d5e8] transition-all duration-200 group/link"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {video.productImage && (
                         <img
                             src={video.productImage}
                             alt={video.productTitle}
-                            className="w-12 h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                            className="w-12 h-12 rounded-xl object-cover border border-[#e8d5e8] shrink-0 group-hover/link:border-[#9b30a0] transition-colors"
                         />
                     )}
-                    <div className="min-w-0">
-                        <p className="text-lg font-extrabold text-gray-900">${video.productPrice}</p>
-                        <p className="text-sm text-gray-600 line-clamp-2 leading-tight">{video.productTitle}</p>
+                    <div className="min-w-0 flex-1">
+                        <p className="text-base font-bold text-[#610361] font-winkySans leading-tight">
+                            ${Number(video.productPrice).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-gray-500 line-clamp-2 leading-snug font-winkySans mt-0.5">
+                            {video.productTitle}
+                        </p>
                     </div>
-                    <ArrowRight size={16} className="text-gray-400 flex-shrink-0 mt-1" />
+                    <div className="w-7 h-7 rounded-lg bg-[#f3e6f3] flex items-center justify-center shrink-0 group-hover/link:bg-[#610361] transition-colors">
+                        <ArrowRight size={13} className="text-[#610361] group-hover/link:text-white transition-colors" />
+                    </div>
                 </Link>
             )}
         </div>

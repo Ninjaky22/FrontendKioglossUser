@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import Breadcrumb from '../components/Breadcrumb';
+import Swal from 'sweetalert2';
 
 export default function Cart() {
     const navigate = useNavigate();
@@ -8,8 +9,56 @@ export default function Cart() {
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+    const handleRemoveItem = async (item) => {
+        const result = await Swal.fire({
+            title: '¿Eliminar producto?',
+            text: `"${item.name}" será eliminado del carrito.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Sí, eliminar',
+            cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Cancelar',
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#9ca3af',
+            customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+            },
+        });
+        if (result.isConfirmed) removeItem(item);
+    };
+
+    const handleClearCart = async () => {
+        const result = await Swal.fire({
+            title: '¿Vaciar carrito?',
+            text: 'Se eliminarán todos los productos del carrito.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Sí, vaciar todo',
+            cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Cancelar',
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#9ca3af',
+            customClass: {
+                title: 'font-winkySans',
+                htmlContainer: 'font-winkySans',
+                confirmButton: 'font-winkySans',
+                cancelButton: 'font-winkySans',
+            },
+        });
+        if (result.isConfirmed) {
+            clearCart();
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success',
+                title: 'Carrito vaciado',
+                showConfirmButton: false, timer: 2000, timerProgressBar: true,
+                customClass: { title: 'font-winkySans' },
+            });
+        }
+    };
+
     return (
-        <div className="bg-[#F7E6FE]">
+        <div className="bg-[#F7E6FE] font-winkySans">
             <Breadcrumb items={[
                 { label: 'Inicio', path: '/', icon: 'fa-solid fa-house text-[#610361]' },
                 { label: 'Carrito' },
@@ -44,7 +93,7 @@ export default function Cart() {
                                         <button onClick={() => updateQty(item, 1)} className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-[#610361]">+</button>
                                     </div>
                                     <span className="font-semibold text-gray-800 min-w-[90px] text-right font-winkySans">COP {item.price * item.quantity}</span>
-                                    <button onClick={() => removeItem(item)} className="text-red-400 hover:text-red-600 p-2"><i className="fa-solid fa-trash"></i></button>
+                                    <button onClick={() => handleRemoveItem(item)} className="text-red-400 hover:text-red-600 p-2"><i className="fa-solid fa-trash"></i></button>
                                 </div>
                             ))}
                         </div>
@@ -68,7 +117,7 @@ export default function Cart() {
                                 className="w-full mt-6 py-3 bg-[#610361] text-white rounded-lg hover:bg-[#500250] transition font-semibold font-winkySans">
                                 Proceder al Pago
                             </button>
-                            <button onClick={clearCart}
+                            <button onClick={handleClearCart}
                                 className="w-full mt-2 py-2 text-red-500 hover:bg-red-50 rounded-lg transition text-sm font-winkySans">
                                 Vaciar Carrito
                             </button>
