@@ -208,31 +208,31 @@ export default function Header() {
                         </div>
                     </div>
 
-                    <div className="order-2 w-1/2 md:w-auto flex justify-end items-center space-x-4 md:space-x-5 md:order-3">
+                    <div className="order-2 w-1/2 md:w-auto flex justify-end items-center space-x-3 md:space-x-5 md:order-3">
                         {isAuthenticated && (
                             <Link to="/wishlist" className="hidden sm:block text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
-                                <div className="text-xl md:text-2xl"><i className="fa-regular fa-heart"></i></div>
-                                <div className="text-[10px] md:text-xs leading-3 hidden sm:block">Deseados</div>
+                                <div className="text-[22px] md:text-2xl"><i className="fa-regular fa-heart"></i></div>
+                                <div className="text-[10px] md:text-xs leading-3 mt-1 hidden sm:block">Deseados</div>
                             </Link>
                         )}
-                        <div className="relative"
+                        <div className="relative group"
                             onMouseEnter={() => setCartOpen(true)}
                             onMouseLeave={() => setCartOpen(false)}>
-                            <Link to="/cart" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium block">
-                                <div className="text-xl md:text-2xl relative inline-block">
+                            <Link to="/cart" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium block cursor-pointer">
+                                <div className="text-[22px] md:text-2xl relative inline-block">
                                     <i className="fa-solid fa-bag-shopping"></i>
                                     {cartCount > 0 && (
-                                        <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[12px] md:text-[15px] w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center leading-none ring-2 ring-white">
+                                        <span className="absolute -top-1.5 -right-2 md:-top-2 md:-right-3 bg-red-500 text-white text-[10px] md:text-[12px] w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center leading-none ring-2 ring-white">
                                             {cartCount > 9 ? '9+' : cartCount}
                                         </span>
                                     )}
                                 </div>
-                                <div className="text-[10px] md:text-xs leading-3 hidden sm:block">Carrito</div>
+                                <div className="text-[10px] md:text-xs leading-3 mt-1 hidden sm:block">Carrito</div>
                             </Link>
 
                             {/* Cart Preview Dropdown */}
                             {cartOpen && (
-                                <div className="absolute right-0 md:right-0 top-full mt-1 w-72 md:w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+                                <div className="hidden lg:block absolute right-0 top-full mt-2 w-[280px] md:w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden origin-top-right animate-in fade-in zoom-in duration-200">
                                     {cart.length === 0 ? (
                                         <div className="p-6 text-center text-gray-400 font-winkySans font-medium">
                                             <i className="fa-solid fa-cart-shopping text-3xl mb-2"></i>
