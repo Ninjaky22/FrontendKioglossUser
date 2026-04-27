@@ -15,18 +15,18 @@ export default function Home() {
 
     return (
         <div className="bg-[#F7E6FE]">
-            <div className="bg-cover bg-no-repeat bg-center py-36" style={{ backgroundImage: "url('/assets/images/banner-bg.jpeg')" }}>
-                <div className="container">
-                    <h1 className="text-6xl text-gray-800 font-medium mb-4 capitalize font-swash">
-                        Las mejores colecciones <br /> de Belleza
+            <div className="bg-cover bg-no-repeat bg-center py-20 sm:py-28 lg:py-36" style={{ backgroundImage: "url('/assets/images/banner-bg.jpeg')" }}>
+                <div className="container mx-auto px-4 md:px-6 lg:px-8">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-tight text-gray-800 font-medium mb-4 capitalize font-swash text-center md:text-left">
+                        Las mejores colecciones <br className="hidden sm:block" /> de Belleza
                     </h1>
-                    <div className="mt-12">
+                    <div className="mt-8 md:mt-12 text-center md:text-left">
                         <Link 
   to="/shop" 
-  className="bg-[#610361] text-white px-8 py-3 font-medium rounded-md font-winkySans 
+  className="bg-[#610361] text-white px-6 py-3 md:px-8 md:py-3 font-medium rounded-md font-winkySans 
              shadow-lg transition-all duration-300 ease-out
              hover:-translate-y-1 hover:scale-105 hover:shadow-xl hover:text-white/80 
-             inline-block"
+             inline-block text-sm md:text-base"
 >
   ¡Comprar Ahora!
 </Link>
@@ -34,8 +34,8 @@ export default function Home() {
                 </div>
             </div>
 
-        <div className="container py-8">
-            <div className="w-10/12 grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto justify-center">
+        <div className="container mx-auto px-4 py-8 md:py-12">
+            <div className="w-full sm:w-11/12 lg:w-10/12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mx-auto justify-center">
                 {[
                     { img: '/assets/images/icons/delivery-van.svg', title: 'Envíos a todo el país', sub: '' },
                     { img: '/assets/images/icons/money-back.svg', title: 'Reembolso', sub: '30 días de devolución de dinero' },
@@ -43,37 +43,37 @@ export default function Home() {
                 ].map((f, i) => (
                     <div 
                         key={i} 
-                        className="border border-white bg-white rounded-xl px-3 py-6 flex justify-center items-center gap-5 
+                        className="border border-white bg-white rounded-xl p-4 sm:p-5 lg:px-3 lg:py-6 flex flex-col sm:flex-row justify-center items-center gap-4 text-center sm:text-left
                                 transition-all duration-500 cursor-pointer
                                 shadow-[0_0_15px_rgba(0,0,0,0.05)] 
                                 hover:scale-[1.05] 
                                 hover:shadow-[0_0_25px_rgba(0,0,0,0.1)]"
                     >
-                        <img src={f.img} alt={f.title} className="w-12 h-12 object-contain" />
+                        <img src={f.img} alt={f.title} className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0" />
                         <div>
-                            <h4 className="font-medium font-winkySans capitalize text-lg text-gray-800">{f.title}</h4>
-                            {f.sub && <p className="text-gray-500 font-winkySans text-sm">{f.sub}</p>}
+                            <h4 className="font-medium font-winkySans capitalize text-base md:text-lg text-gray-800">{f.title}</h4>
+                            {f.sub && <p className="text-gray-500 font-winkySans text-xs md:text-sm mt-1 sm:mt-0">{f.sub}</p>}
                         </div>
                     </div>
                 ))}
             </div>
         </div>
 
-            <div className="container pb-8">
-                <h2 className="text-5xl font-bold text-[#610361] font-swash mb-8 text-center">Comprar por categoría</h2>
+            <div className="container mx-auto px-4 pb-8 md:pb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#610361] font-swash mb-6 md:mb-8 text-center">Comprar por categoría</h2>
                 {tags.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                         {tags.map((tag) => (
-                            <div key={tag.id} className="relative rounded-sm overflow-hidden group group 
+                            <div key={tag.id} className="relative rounded-sm overflow-hidden group 
                                 transition-all duration-500 cursor-pointer
                                 shadow-[0_0_15px_rgba(0,0,0,0.05)] 
                                 hover:scale-[1.01] 
                                 hover:shadow-[0_0_25px_rgba(0,0,0,0.1)]">
                                 <img src={tag.imageURL || defaultImg} alt={tag.name}
-                                    className="w-full h-48 object-cover"
+                                    className="w-full h-56 sm:h-64 lg:h-72 object-cover"
                                     onError={(e) => { e.target.onerror = null; e.target.src = defaultImg; }} />
                                 <Link to={`/shop?categories=${encodeURIComponent(tag.name)}`}
-                                    className="absolute inset-0 bg-black/30 hover:bg-black/60 flex items-center justify-center text-xl text-white font-surfer font-medium transition capitalize font-winkySans">
+                                    className="absolute inset-0 bg-black/30 hover:bg-black/60 flex items-center justify-center text-xl sm:text-2xl text-white font-surfer font-medium transition-colors duration-300 capitalize font-winkySans">
                                     {tag.name}
                                 </Link>
                             </div>
