@@ -51,26 +51,26 @@ export default function VideoReelsSection() {
             <div className="container mx-auto px-6 relative">
 
                 {/* ── Encabezado ── */}
-                <div className="mb-10 flex items-end justify-between flex-wrap gap-4">
+                <div className="mb-8 md:mb-10 flex flex-col md:flex-row items-center md:items-end justify-between gap-4 text-center md:text-left">
                     <div>
-                        <p className="text-s font-bold text-[#9b30a0] uppercase tracking-widest mb-1">Comunidad</p>
-                        <h2 className="text-4xl md:text-5xl font-bold text-[#610361] font-swash leading-tight text-center">
+                        <p className="text-sm font-bold text-[#9b30a0] uppercase tracking-widest mb-1">Comunidad</p>
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#610361] font-swash leading-tight">
                             Destacados en <span className="text-[#9b30a0] italic">videos</span>
                         </h2>
-                        <p className="text-gray-600 mt-2 font-winkySans text-s">
+                        <p className="text-gray-600 mt-2 font-winkySans text-sm sm:text-base">
                             Mira lo que nuestros clientes están compartiendo
                         </p>
                     </div>
                 </div>
 
                 {/* ── Carrusel ── */}
-                <div className="relative flex items-center gap-3">
+                <div className="relative flex items-center md:gap-3">
 
                     {/* Botón izquierda */}
                     <button
                         onClick={() => scroll('left')}
                         disabled={!canScrollLeft}
-                        className="shrink-0 w-10 h-10 rounded-xl border-2 border-[#610361] flex items-center justify-center text-[#610361] hover:bg-[#610361] hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                        className="hidden md:flex shrink-0 w-10 h-10 rounded-xl border-2 border-[#610361] items-center justify-center text-[#610361] hover:bg-[#610361] hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                     >
                         <ChevronLeft size={18} />
                     </button>
@@ -78,7 +78,7 @@ export default function VideoReelsSection() {
                     {/* Carrusel */}
                     <div
                         ref={scrollContainerRef}
-                        className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory flex-1"
+                        className="flex gap-4 md:gap-5 overflow-x-auto pb-4 snap-x snap-mandatory flex-1 pt-2"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {videos.map((video) => (
@@ -90,7 +90,7 @@ export default function VideoReelsSection() {
                     <button
                         onClick={() => scroll('right')}
                         disabled={!canScrollRight}
-                        className="shrink-0 w-10 h-10 rounded-xl border-2 border-[#610361] flex items-center justify-center text-[#610361] hover:bg-[#610361] hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                        className="hidden md:flex shrink-0 w-10 h-10 rounded-xl border-2 border-[#610361] items-center justify-center text-[#610361] hover:bg-[#610361] hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                     >
                         <ChevronRight size={18} />
                     </button>

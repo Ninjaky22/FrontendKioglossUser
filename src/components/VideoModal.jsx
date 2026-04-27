@@ -38,22 +38,23 @@ export default function VideoModal({ video, onClose }) {
 
     return createPortal(
         <div
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-9999 flex items-center justify-center p-4 font-winkySans"
+            className="fixed inset-0 bg-black/25 backdrop-blur-md z-9999 flex items-center justify-center p-2 sm:p-4 font-winkySans"
             onClick={onClose}
         >
             <div
-                className="relative w-full max-w-[400px] animate-[scaleIn_0.2s_ease-out]"
+                className="relative w-full max-w-[340px] sm:max-w-[400px] md:max-w-[420px] max-h-[90vh] sm:max-h-[85vh] animate-[scaleIn_0.2s_ease-out] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* ── Contenedor del video ── */}
-                <div className="relative aspect-9/16 rounded-2xl overflow-hidden bg-black shadow-2xl">
+                <div className="relative w-full aspect-9/16 rounded-2xl md:rounded-3xl overflow-hidden bg-black  shadow-2xl shrink-0">
 
                     {/* Botón cerrar — dentro del frame, esquina superior derecha */}
                     <button
                         onClick={onClose}
-                        className="absolute top-3 right-3 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-[#610361] transition-all z-20 border border-white/10"
+                        className="absolute top-3 right-3 sm:top-4 sm:right-4 w-9 h-9 sm:w-10 sm:h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-[#610361] hover:scale-105 active:scale-95 transition-all z-20 border border-white/20"
                     >
-                        <X size={18} />
+                        <X size={20} className="sm:hidden" />
+                        <X size={22} className="hidden sm:block" />
                     </button>                    
 
                     {parsed ? (
@@ -93,7 +94,7 @@ export default function VideoModal({ video, onClose }) {
                 </div>
 
                 {/* Hint */}
-                <p className="text-center text-white/30 text-xs mt-3 font-winkySans">
+                <p className="hidden sm:block text-center text-white/30 text-xs mt-3 font-winkySans">
                     Presiona <kbd className="bg-white/10 px-1.5 py-0.5 rounded text-[10px]">Esc</kbd> o toca fuera para cerrar
                 </p>
             </div>
