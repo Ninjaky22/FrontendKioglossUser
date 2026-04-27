@@ -29,7 +29,7 @@ export default function Sidebar({ onFilterChange, selectedTags = [] }) {
     };
 
     return (
-        <div className="col-span-1 hidden md:block">
+        <div className="w-full md:col-span-1 drop-shadow-sm transition-all duration-300">
             <style>{`
                 .sidebar-tag-check { display: none; }
                 .sidebar-tag-label {
@@ -135,15 +135,15 @@ export default function Sidebar({ onFilterChange, selectedTags = [] }) {
                         </div>
 
                         {loading ? (
-                            <div className="space-y-2 animate-pulse">
-                                {[...Array(5)].map((_, i) => (
-                                    <div key={i} className="h-9 bg-[#f3e8ff] rounded-xl" style={{ width: `${70 + i * 5}%` }}></div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-1 gap-2 md:gap-1 animate-pulse">
+                                {[...Array(6)].map((_, i) => (
+                                    <div key={i} className="h-9 md:h-10 bg-[#f3e8ff] rounded-xl w-full"></div>
                                 ))}
                             </div>
                         ) : tags.length > 0 ? (
-                            <div className="space-y-1 max-h-64 overflow-y-auto sidebar-scroll pr-1">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-1 gap-2 md:gap-1 max-h-64 md:max-h-88 overflow-y-auto sidebar-scroll pr-1 pb-1">
                                 {tags.map(tag => (
-                                    <div key={tag.id}>
+                                    <div key={tag.id} className="w-full">
                                         <input
                                             type="checkbox"
                                             id={`tag-${tag.id}`}
@@ -151,9 +151,9 @@ export default function Sidebar({ onFilterChange, selectedTags = [] }) {
                                             checked={selected.includes(tag.id)}
                                             onChange={() => toggle(tag.id)}
                                         />
-                                        <label htmlFor={`tag-${tag.id}`} className="sidebar-tag-label">
+                                        <label htmlFor={`tag-${tag.id}`} className="sidebar-tag-label w-full whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal h-full">
                                             <span className="sidebar-tag-indicator"></span>
-                                            <span className="capitalize">{tag.name || tag.slug}</span>
+                                            <span className="capitalize truncate leading-tight">{tag.name || tag.slug}</span>
                                         </label>
                                     </div>
                                 ))}
