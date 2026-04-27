@@ -70,26 +70,26 @@ export default function ContactForm() {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-b flex items-center justify-center py-4 px-4 font-winkySans">
-            <div className="w-full max-w-lg">
+        <div className="min-h-screen bg-linear-to-b flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-winkySans">
+            <div className="w-full max-w-lg lg:max-w-xl transition-all duration-300">
 
-                <div className="bg-white rounded-3xl shadow-xl border border-purple-100 overflow-hidden">
+                <div className="bg-white rounded-4xl shadow-2xl border border-purple-100 overflow-hidden">
 
                     {/* Header */}
-                    <div className="relative bg-[#610361] px-8 py-8 overflow-hidden">
-                        <div className="absolute -top-6 -right-6 w-28 h-28 bg-white/10 rounded-full"></div>
-                        <div className="absolute -bottom-8 -left-4 w-20 h-20 bg-white/10 rounded-full"></div>
-                        <div className="relative flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-1">
-                                <i className="fa-solid fa-envelope text-white text-xl"></i>
+                    <div className="relative bg-[#610361] px-6 py-8 sm:px-8 sm:py-10 overflow-hidden">
+                        <div className="absolute -top-6 -right-6 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-sm"></div>
+                        <div className="absolute -bottom-8 -left-4 w-16 h-16 sm:w-24 sm:h-24 bg-white/10 rounded-full blur-sm"></div>
+                        <div className="relative flex flex-col items-center gap-2 lg:gap-3">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-1 lg:mb-2 shadow-inner backdrop-blur-sm">
+                                <i className="fa-solid fa-envelope text-white text-xl sm:text-2xl"></i>
                             </div>
-                            <h2 className="text-3xl font-bold text-white font-winkySans tracking-tight">Contáctanos</h2>
-                            <p className="text-purple-200 text-sm">¡Estamos aquí para ayudarte!</p>
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white font-winkySans tracking-tight">Contáctanos</h2>
+                            <p className="text-purple-200 text-xs sm:text-sm lg:text-base font-medium">¡Estamos aquí para ayudarte!</p>
                         </div>
                     </div>
 
                     {/* Body */}
-                    <div className="px-8 py-8">
+                    <div className="px-6 py-6 sm:px-8 sm:py-8 bg-gray-50/30">
                         <form onSubmit={handleSubmit} className="space-y-5">
 
                             {/* Nombre */}
@@ -182,9 +182,9 @@ export default function ContactForm() {
                             {/* Submit */}
                             <button
                                 type="submit"
-                                className="w-full py-3.5 rounded-xl bg-[#9b30a0] hover:bg-[#7b2585] text-white font-bold text-sm tracking-wide shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
+                                className="w-full py-3.5 sm:py-4 mt-2 sm:mt-4 rounded-xl bg-[#9b30a0] hover:bg-[#7b2585] text-white font-bold text-sm sm:text-base tracking-wide shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
                             >
-                                <i className="fa-solid fa-paper-plane text-sm"></i>
+                                <i className="fa-solid fa-paper-plane text-sm sm:text-base -mt-0.5"></i>
                                 Enviar mensaje
                             </button>
                         </form>
