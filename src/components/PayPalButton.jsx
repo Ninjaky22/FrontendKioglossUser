@@ -72,10 +72,17 @@ export default function PayPalButton({ amount, onSuccess, onError, description =
     }, [scriptLoaded]); //Solo depende de scriptLoaded
 
     return (
-        <div ref={paypalRef} className="w-full min-h-[150px]">
+        <div ref={paypalRef} className="w-full min-h-[120px] sm:min-h-[140px] lg:min-h-[150px] transition-all duration-300 relative z-0">
             {!scriptLoaded && (
-                <div className="flex items-center justify-center p-4 bg-gray-100 rounded animate-pulse">
-                    <span className="text-sm text-gray-500">Cargando PayPal...</span>
+                <div className="flex flex-col gap-3 sm:gap-4 w-full animate-pulse">
+                    <div className="flex items-center justify-center w-full h-[45px] sm:h-[55px] bg-gray-100 rounded-md sm:rounded-lg border border-gray-200 shadow-xs">
+                        <div className="flex items-center gap-2 text-gray-400">
+                            <i className="fa-brands fa-paypal text-base sm:text-lg"></i>
+                            <span className="text-xs sm:text-sm font-medium tracking-wide">Cargando PayPal...</span>
+                        </div>
+                    </div>
+                    {/* Skeleton para el posible botón secundario (Tarjetas, Pay Later, etc.) que carga PayPal en vertical */}
+                    <div className="w-full h-[45px] sm:h-[55px] bg-gray-100/70 rounded-md sm:rounded-lg border border-gray-200/70 shadow-xs"></div>
                 </div>
             )}
         </div>
