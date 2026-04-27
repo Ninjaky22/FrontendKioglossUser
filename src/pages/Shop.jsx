@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
 import Sidebar from '../components/Sidebar';
 import ProductCard from '../components/ProductCard';
@@ -17,6 +17,8 @@ export default function Shop() {
     const [selectedTagNames, setSelectedTagNames] = useState([]);
     const [showOutOfStock, setShowOutOfStock] = useState(false);
     const [sortBy, setSortBy] = useState('');
+    const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+    const sortDropdownRef = useRef(null);
 
     useEffect(() => {
         productService.getAllTags().then(d => setTags(d || [])).catch(() => {});
@@ -39,6 +41,16 @@ export default function Shop() {
     useEffect(() => {
         loadProducts();
     }, [currentPage, searchQuery, selectedTagNames, sortBy]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target)) {
+                setIsSortDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const loadProducts = async () => {
         try {
@@ -86,30 +98,54 @@ export default function Shop() {
                 { label: 'Productos' }
             ]} />
 
-            <div className="container grid md:grid-cols-4 grid-cols-2 gap-6 pt-6 pb-16 items-start">
+            <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 pb-16 items-start">
                 <Sidebar
                     onFilterChange={handleFilterChange}
                     selectedTags={selectedTagNames.map(n => tags.find(t => t.name === n)?.id).filter(Boolean)}
                 />
 
-                <div className="col-span-3">
+                <div className="col-span-1 lg:col-span-3">
 
                     {/* ── Barra de filtros ── */}
-                    <div className="bg-white rounded-2xl border border-purple-100/70 shadow-sm px-4 py-3 mb-6 flex flex-wrap items-center gap-3">
+                    <div className="bg-white rounded-2xl border border-purple-100/70 shadow-sm px-3 sm:px-4 py-3 mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
 
                         {/* Sort select */}
-                        <div className="relative">
-                            <select
-                                onChange={(e) => setSortBy(e.target.value)}
-                                value={sortBy}
-                                className="appearance-none pl-4 pr-9 py-2.5 text-sm text-[#610361] bg-purple-50 border border-purple-200 rounded-xl font-winkySans focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] cursor-pointer transition-all hover:bg-purple-100"
+                        <div className="relative w-full sm:w-auto" ref={sortDropdownRef}>
+                            <button
+                                onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                                className="w-full sm:w-auto appearance-none flex items-center justify-between sm:min-w-[240px] pl-4 pr-3 py-2.5 text-sm text-[#610361] bg-purple-50 border border-purple-200 rounded-xl font-winkySans focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] cursor-pointer transition-all hover:bg-purple-100"
                             >
-                                <option value="">Configuración predeterminada</option>
-                                <option value="price-low">Precio: menor a mayor</option>
-                                <option value="price-high">Precio: mayor a menor</option>
-                                <option value="latest">Últimos productos</option>
-                            </select>
-                            <i className="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#9b30a0] text-xs pointer-events-none"></i>
+                                <span className="truncate pr-2">
+                                    {sortBy === 'price-low' ? 'Precio: menor a mayor' : 
+                                     sortBy === 'price-high' ? 'Precio: mayor a menor' : 
+                                     sortBy === 'latest' ? 'Últimos productos' : 
+                                     'Configuración predeterminada'}
+                                </span>
+                                <i className={`fa-solid fa-chevron-down text-[#9b30a0] text-xs transition-transform duration-200 ${isSortDropdownOpen ? 'rotate-180' : ''}`}></i>
+                            </button>
+                            
+                            {isSortDropdownOpen && (
+                                <ul className="absolute z-50 w-full mt-1.5 py-1 bg-white border border-purple-100 shadow-[0_4px_20px_-4px_rgba(155,48,160,0.15)] rounded-xl overflow-hidden font-winkySans text-sm transform origin-top transition-all">
+                                    {[
+                                        { value: '', label: 'Configuración predeterminada' },
+                                        { value: 'price-low', label: 'Precio: menor a mayor' },
+                                        { value: 'price-high', label: 'Precio: mayor a menor' },
+                                        { value: 'latest', label: 'Últimos productos' },
+                                    ].map((option) => (
+                                        <li key={option.value}>
+                                            <button
+                                                onClick={() => {
+                                                    setSortBy(option.value);
+                                                    setIsSortDropdownOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2.5 hover:bg-[#fce4ff] transition-colors ${sortBy === option.value ? 'text-[#9b30a0] font-bold bg-purple-50/50' : 'text-[#610361]'}`}
+                                            >
+                                                {option.label}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
 
                         {/* Divider */}
@@ -121,7 +157,7 @@ export default function Shop() {
                         {products.some(p => p.stock != null && p.stock <= 0) && (
                             <button
                                 onClick={() => setShowOutOfStock(v => !v)}
-                                className={`inline-flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl font-winkySans transition-all border ${
+                                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 text-sm px-4 py-2.5 rounded-xl font-winkySans transition-all border ${
                                     showOutOfStock
                                         ? 'bg-[#610361] text-white border-[#610361] shadow-md shadow-purple-200'
                                         : 'bg-purple-50 text-[#610361] border-purple-200 hover:bg-purple-100'
@@ -195,17 +231,17 @@ export default function Shop() {
                         </div>
                     ) : (
                         <>
-                            <div className="grid md:grid-cols-3 grid-cols-2 gap-6">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                                 {(() => {
                                     const filtered = showOutOfStock ? products : products.filter(p => p.stock == null || p.stock > 0);
                                     return filtered.length > 0
                                         ? filtered.map(p => <ProductCard key={p.id} product={p} />)
                                         : (
-                                            <div className="col-span-3 flex flex-col items-center justify-center py-24 gap-3 text-gray-400 font-winkySans">
+                                            <div className="col-span-full flex flex-col items-center justify-center py-16 sm:py-24 gap-3 text-gray-400 font-winkySans">
                                                 <div className="w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center mb-1">
                                                     <i className="fa-solid fa-box-open text-2xl text-purple-300"></i>
                                                 </div>
-                                                <p className="text-base font-medium text-gray-500">No se encontraron productos</p>
+                                                <p className="text-base font-medium text-gray-500 text-center px-4">No se encontraron productos</p>
                                                 {hasActiveFilters && (
                                                     <button onClick={clearAll} className="text-sm text-[#9b30a0] hover:underline transition-all">
                                                         Limpiar filtros
@@ -218,25 +254,25 @@ export default function Shop() {
 
                             {/* ── Paginación ── */}
                             {totalPages > 1 && (
-                                <div className="flex justify-center items-center mt-10 gap-2">
+                                <div className="flex flex-wrap justify-center items-center mt-10 gap-2 sm:gap-4 px-2">
                                     <button
                                         onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
                                         disabled={currentPage === 0}
-                                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-purple-200 text-[#610361] rounded-xl text-sm font-winkySans hover:bg-purple-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                                        className="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2.5 bg-white border border-purple-200 text-[#610361] rounded-xl text-xs sm:text-sm font-winkySans hover:bg-purple-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
                                     >
-                                        <i className="fa-solid fa-chevron-left text-xs"></i> Anterior
+                                        <i className="fa-solid fa-chevron-left text-[10px] sm:text-xs"></i> <span className="hidden sm:inline">Anterior</span>
                                     </button>
 
-                                    <div className="px-5 py-2.5 bg-[#9b30a0] text-white rounded-xl text-sm font-winkySans shadow-sm">
-                                        {currentPage + 1} <span className="opacity-60">/ {totalPages}</span>
+                                    <div className="px-4 sm:px-5 py-2.5 bg-[#9b30a0] text-white rounded-xl text-xs sm:text-sm font-winkySans shadow-sm font-medium">
+                                        {currentPage + 1} <span className="opacity-60 font-normal mx-1">de</span> {totalPages}
                                     </div>
 
                                     <button
                                         onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                                         disabled={currentPage >= totalPages - 1}
-                                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-purple-200 text-[#610361] rounded-xl text-sm font-winkySans hover:bg-purple-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                                        className="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2.5 bg-white border border-purple-200 text-[#610361] rounded-xl text-xs sm:text-sm font-winkySans hover:bg-purple-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
                                     >
-                                        Siguiente <i className="fa-solid fa-chevron-right text-xs"></i>
+                                        <span className="hidden sm:inline">Siguiente</span> <i className="fa-solid fa-chevron-right text-[10px] sm:text-xs"></i>
                                     </button>
                                 </div>
                             )}
