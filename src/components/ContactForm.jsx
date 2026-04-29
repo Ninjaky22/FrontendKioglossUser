@@ -70,18 +70,18 @@ export default function ContactForm() {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-b flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-winkySans">
-            <div className="w-full max-w-lg lg:max-w-xl transition-all duration-300">
+        <div className="min-h-screen bg-linear-to-b flex items-center justify-center py-8 sm:py-10 px-4 sm:px-6 lg:px-8 font-winkySans">
+            <div className="w-full max-w-lg lg:max-w-lg transition-all duration-300">
 
                 <div className="bg-white rounded-4xl shadow-2xl border border-purple-100 overflow-hidden">
 
                     {/* Header */}
-                    <div className="relative bg-[#610361] px-6 py-8 sm:px-8 sm:py-10 overflow-hidden">
-                        <div className="absolute -top-6 -right-6 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-sm"></div>
-                        <div className="absolute -bottom-8 -left-4 w-16 h-16 sm:w-24 sm:h-24 bg-white/10 rounded-full blur-sm"></div>
-                        <div className="relative flex flex-col items-center gap-2 lg:gap-3">
-                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-1 lg:mb-2 shadow-inner backdrop-blur-sm">
-                                <i className="fa-solid fa-envelope text-white text-xl sm:text-2xl"></i>
+                    <div className="relative bg-[#610361] px-6 py-4 sm:px-8 sm:py-6 overflow-hidden">
+                        <div className="absolute -top-5 -right-5 w-16 h-16 sm:w-24 sm:h-24 bg-white/10 rounded-full blur-sm"></div>
+                        <div className="absolute -bottom-7 -left-4 w-12 h-12 sm:w-16 sm:h-16 bg-white/10 rounded-full blur-sm"></div>
+                        <div className="relative flex flex-col items-center gap-1.5 sm:gap-2">
+                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-1 shadow-inner backdrop-blur-sm">
+                                <i className="fa-solid fa-envelope text-white text-lg sm:text-xl"></i>
                             </div>
                             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white font-winkySans tracking-tight">Contáctanos</h2>
                             <p className="text-purple-200 text-xs sm:text-sm lg:text-base font-medium">¡Estamos aquí para ayudarte!</p>
@@ -89,8 +89,8 @@ export default function ContactForm() {
                     </div>
 
                     {/* Body */}
-                    <div className="px-6 py-6 sm:px-8 sm:py-8 bg-gray-50/30">
-                        <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="px-6 py-5 sm:px-8 sm:py-6 bg-gray-50/30">
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
                             {/* Nombre */}
                             <div>
@@ -166,7 +166,7 @@ export default function ContactForm() {
                                     <textarea
                                         value={mensaje}
                                         onChange={e => e.target.value.length <= LIMITS.mensaje.max && setMensaje(e.target.value)}
-                                        rows={5} required
+                                        rows={4} required
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-purple-100 bg-purple-50/40 text-gray-700 text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] transition-all resize-none"
                                         placeholder={`Describe tu consulta... (mín. ${LIMITS.mensaje.min} caracteres)`}
                                     />
@@ -182,7 +182,7 @@ export default function ContactForm() {
                             {/* Submit */}
                             <button
                                 type="submit"
-                                className="w-full py-3.5 sm:py-4 mt-2 sm:mt-4 rounded-xl bg-[#9b30a0] hover:bg-[#7b2585] text-white font-bold text-sm sm:text-base tracking-wide shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
+                                className="w-full lg:col-span-2 py-3.5 sm:py-4 mt-2 sm:mt-4 rounded-xl bg-[#9b30a0] hover:bg-[#7b2585] text-white font-bold text-sm sm:text-base tracking-wide shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
                             >
                                 <i className="fa-solid fa-paper-plane text-sm sm:text-base -mt-0.5"></i>
                                 Enviar mensaje
