@@ -18,7 +18,10 @@ export default function Shop() {
     const [showOutOfStock, setShowOutOfStock] = useState(false);
     const [sortBy, setSortBy] = useState('');
     const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const [isMobileSortDropdownOpen, setIsMobileSortDropdownOpen] = useState(false);
     const sortDropdownRef = useRef(null);
+    const mobileSortDropdownRef = useRef(null);
 
     useEffect(() => {
         productService.getAllTags().then(d => setTags(d || [])).catch(() => {});
@@ -46,6 +49,9 @@ export default function Shop() {
         const handleClickOutside = (event) => {
             if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target)) {
                 setIsSortDropdownOpen(false);
+            }
+            if (mobileSortDropdownRef.current && !mobileSortDropdownRef.current.contains(event.target)) {
+                setIsMobileSortDropdownOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -99,21 +105,118 @@ export default function Shop() {
             ]} />
 
             <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 pb-16 items-start">
-                <Sidebar
-                    onFilterChange={handleFilterChange}
-                    selectedTags={selectedTagNames.map(n => tags.find(t => t.name === n)?.id).filter(Boolean)}
-                />
+                
+                {/* Overlay móvil para el sidebar */}
+                {isMobileSidebarOpen && (
+                    <div 
+                        className="fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity"
+                        onClick={() => setIsMobileSidebarOpen(false)}
+                    ></div>
+                )}
+
+                {/* Contenedor del Sidebar (Drawer en móvil, grid normal en PC) */}
+                <div className={`fixed inset-y-0 left-0 z-50 w-[280px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:relative lg:w-auto lg:bg-transparent lg:shadow-none lg:z-auto lg:transform-none lg:translate-x-0 ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    <div className="h-full overflow-y-auto lg:overflow-visible">
+                        <div className="p-4 lg:hidden flex items-center justify-between border-b border-purple-100">
+                            <h2 className="text-lg font-bold text-[#610361] font-winkySans flex items-center gap-2">
+                                <i className="fa-solid fa-filter"></i> Filtros
+                            </h2>
+                            <button 
+                                onClick={() => setIsMobileSidebarOpen(false)}
+                                className="w-8 h-8 rounded-full bg-purple-50 text-[#9b30a0] flex items-center justify-center hover:bg-purple-100 transition-colors"
+                            >
+                                <i className="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        
+                        {/* Controles extra en móvil */}
+                        <div className="p-4 lg:hidden flex flex-col gap-3 border-b border-purple-100 bg-purple-50/30 overflow-visible">
+                            <div className="relative w-full" ref={mobileSortDropdownRef}>
+                                <button
+                                    onClick={() => setIsMobileSortDropdownOpen(!isMobileSortDropdownOpen)}
+                                    className="w-full appearance-none flex items-center justify-between pl-4 pr-3 py-2.5 text-sm text-[#610361] bg-white border border-purple-200 rounded-xl font-winkySans focus:outline-none shadow-sm cursor-pointer transition-all"
+                                >
+                                    <span className="truncate pr-2">
+                                        {sortBy === 'price-low' ? 'Precio: menor a mayor' : 
+                                         sortBy === 'price-high' ? 'Precio: mayor a menor' : 
+                                         sortBy === 'latest' ? 'Últimos productos' : 
+                                         'Configuración predeterminada'}
+                                    </span>
+                                    <i className={`fa-solid fa-chevron-down text-[#9b30a0] text-xs transition-transform duration-200 ${isMobileSortDropdownOpen ? 'rotate-180' : ''}`}></i>
+                                </button>
+                                
+                                {isMobileSortDropdownOpen && (
+                                    <ul className="absolute z-50 w-full mt-1.5 py-1 bg-white border border-purple-100 shadow-[0_4px_20px_-4px_rgba(155,48,160,0.15)] rounded-xl overflow-hidden font-winkySans text-sm transform origin-top transition-all">
+                                        {[
+                                            { value: '', label: 'Configuración predeterminada' },
+                                            { value: 'price-low', label: 'Precio: menor a mayor' },
+                                            { value: 'price-high', label: 'Precio: mayor a menor' },
+                                            { value: 'latest', label: 'Últimos productos' },
+                                        ].map((option) => (
+                                            <li key={option.value}>
+                                                <button
+                                                    onClick={() => {
+                                                        setSortBy(option.value);
+                                                        setIsMobileSortDropdownOpen(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2.5 hover:bg-[#fce4ff] transition-colors ${sortBy === option.value ? 'text-[#9b30a0] font-bold bg-purple-50/50' : 'text-[#610361]'}`}
+                                                >
+                                                    {option.label}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+
+                            {products.some(p => p.stock != null && p.stock <= 0) && (
+                                <button
+                                    onClick={() => setShowOutOfStock(v => !v)}
+                                    className={`w-full inline-flex items-center justify-center gap-2 text-sm px-4 py-2.5 rounded-xl font-winkySans transition-all border ${
+                                        showOutOfStock
+                                            ? 'bg-[#610361] text-white border-[#610361] shadow-md shadow-purple-200'
+                                            : 'bg-white text-[#610361] border-purple-200 hover:bg-purple-100'
+                                    }`}
+                                >
+                                    <i className={`fa-solid ${showOutOfStock ? 'fa-eye' : 'fa-eye-slash'} text-xs`}></i>
+                                    {showOutOfStock ? 'Viendo agotados' : 'Mostrar agotados'}
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="p-4 lg:p-0">
+                            <Sidebar
+                                onFilterChange={handleFilterChange}
+                                selectedTags={selectedTagNames.map(n => tags.find(t => t.name === n)?.id).filter(Boolean)}
+                            />
+                        </div>
+                    </div>
+                </div>
 
                 <div className="col-span-1 lg:col-span-3">
 
                     {/* ── Barra de filtros ── */}
                     <div className="bg-white rounded-2xl border border-purple-100/70 shadow-sm px-3 sm:px-4 py-3 mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
 
+                        {/* Botón Filtros Móvil */}
+                        <button 
+                            onClick={() => setIsMobileSidebarOpen(true)}
+                            className="w-full sm:w-auto lg:hidden appearance-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm text-white bg-[#610361] hover:bg-[#9b30a0] rounded-xl font-winkySans focus:outline-none shadow-md shadow-purple-200 transition-all font-bold"
+                        >
+                            <i className="fa-solid fa-sliders"></i>
+                            Filtrar Productos
+                            {(selectedTagNames.length > 0) && (
+                                <span className="bg-white text-[#610361] text-xs px-1.5 py-0.5 rounded-md ml-1 font-bold">
+                                    {selectedTagNames.length}
+                                </span>
+                            )}
+                        </button>
+
                         {/* Sort select */}
-                        <div className="relative w-full sm:w-auto" ref={sortDropdownRef}>
+                        <div className="relative w-full sm:w-auto hidden lg:block" ref={sortDropdownRef}>
                             <button
                                 onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                                className="w-full sm:w-auto appearance-none flex items-center justify-between sm:min-w-[240px] pl-4 pr-3 py-2.5 text-sm text-[#610361] bg-purple-50 border border-purple-200 rounded-xl font-winkySans focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] cursor-pointer transition-all hover:bg-purple-100"
+                                className="w-full sm:w-auto appearance-none flex items-center justify-between sm:min-w-60 pl-4 pr-3 py-2.5 text-sm text-[#610361] bg-purple-50 border border-purple-200 rounded-xl font-winkySans focus:outline-none focus:ring-2 focus:ring-[#9b30a0]/30 focus:border-[#9b30a0] cursor-pointer transition-all hover:bg-purple-100"
                             >
                                 <span className="truncate pr-2">
                                     {sortBy === 'price-low' ? 'Precio: menor a mayor' : 
@@ -157,7 +260,7 @@ export default function Shop() {
                         {products.some(p => p.stock != null && p.stock <= 0) && (
                             <button
                                 onClick={() => setShowOutOfStock(v => !v)}
-                                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 text-sm px-4 py-2.5 rounded-xl font-winkySans transition-all border ${
+                                className={`hidden lg:inline-flex w-full sm:w-auto items-center justify-center gap-2 text-sm px-4 py-2.5 rounded-xl font-winkySans transition-all border ${
                                     showOutOfStock
                                         ? 'bg-[#610361] text-white border-[#610361] shadow-md shadow-purple-200'
                                         : 'bg-purple-50 text-[#610361] border-purple-200 hover:bg-purple-100'
