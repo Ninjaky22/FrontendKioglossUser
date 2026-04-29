@@ -34,7 +34,7 @@ export default function VideoReelCard({ video, onVideoClick }) {
     const isDirect = parsed?.platform === 'direct';
 
     return (
-        <div className="w-[220px] sm:w-[250px] md:w-[280px] lg:w-[300px] shrink-0 snap-center md:snap-start font-winkySans">
+        <div className="w-[220px] sm:w-[250px] md:w-[280px] lg:w-[200px] shrink-0 snap-center md:snap-start font-winkySans">
 
             {/* ── Video card ── */}
             <div

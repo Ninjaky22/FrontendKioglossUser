@@ -75,10 +75,9 @@ export default function VideoReelsSection() {
                         <ChevronLeft size={18} />
                     </button>
 
-                    {/* Carrusel */}
                     <div
                         ref={scrollContainerRef}
-                        className="flex gap-4 md:gap-5 overflow-x-auto pb-4 snap-x snap-mandatory flex-1 pt-2"
+                        className="flex items-start gap-4 md:gap-5 overflow-x-auto pb-4 snap-x snap-mandatory flex-1 pt-2"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {videos.map((video) => (
