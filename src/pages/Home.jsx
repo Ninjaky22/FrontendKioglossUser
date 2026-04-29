@@ -14,22 +14,27 @@ export default function Home() {
     const defaultImg = '/assets/images/category/category-1.jpg';
 
     return (
-        <div className="bg-[#F7E6FE]">
-            <div className="bg-cover bg-no-repeat bg-center py-20 sm:py-28 lg:py-36" style={{ backgroundImage: "url('/assets/images/banner-bg.jpeg')" }}>
-                <div className="container mx-auto px-4 md:px-6 lg:px-8">
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-tight text-gray-800 font-medium mb-4 capitalize font-swash text-center md:text-left">
-                        Las mejores colecciones <br className="hidden sm:block" /> de Belleza
-                    </h1>
-                    <div className="mt-8 md:mt-12 text-center md:text-left">
-                        <Link 
-  to="/shop" 
-  className="bg-[#610361] text-white px-6 py-3 md:px-8 md:py-3 font-medium rounded-md font-winkySans 
-             shadow-lg transition-all duration-300 ease-out
-             hover:-translate-y-1 hover:scale-105 hover:shadow-xl hover:text-white/80 
-             inline-block text-sm md:text-base"
->
-  ¡Comprar Ahora!
-</Link>
+        <div className="bg-[#fdf4ff]">
+            <div className="bg-cover bg-no-repeat bg-center py-24 sm:py-32 lg:py-40 relative" style={{ backgroundImage: "url('/assets/images/banner-bg.jpeg')" }}>
+                {/* Gradiente blanco fluido para texto oscuro legible */}
+                <div className="absolute inset-0 bg-linear-to-r from-[#fdf4ff]/95 via-[#fdf4ff]/70 to-transparent"></div>
+                
+                <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+                    <div className="max-w-2xl text-center md:text-left">
+                        <h1 className="text-4xl sm:text-5xl lg:text-7xl leading-tight text-[#610361] font-extrabold mb-4 capitalize font-swash tracking-tight">
+                            Las mejores colecciones <br className="hidden sm:block" /> de Belleza
+                        </h1>
+                        <div className="mt-8 md:mt-10 md:text-left">
+                            <Link 
+                              to="/shop" 
+                              className="bg-[#610361] text-white px-8 py-3.5 md:px-10 md:py-4 font-bold rounded-xl font-winkySans tracking-wide
+                                         shadow-[0_8px_20px_rgba(97,3,97,0.3)] transition-all duration-300 ease-out border border-[#610361]
+                                         hover:-translate-y-1 hover:scale-105 hover:shadow-[0_12px_25px_rgba(97,3,97,0.4)] hover:bg-[#9b30a0] hover:border-[#9b30a0] 
+                                         inline-block text-sm md:text-base"
+                            >
+                              ¡Comprar Ahora!
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43,15 +48,16 @@ export default function Home() {
                 ].map((f, i) => (
                     <div 
                         key={i} 
-                        className="border border-white bg-white rounded-xl p-4 sm:p-5 lg:px-3 lg:py-6 flex flex-col sm:flex-row justify-center items-center gap-4 text-center sm:text-left
-                                transition-all duration-500 cursor-pointer
-                                shadow-[0_0_15px_rgba(0,0,0,0.05)] 
-                                hover:scale-[1.05] 
-                                hover:shadow-[0_0_25px_rgba(0,0,0,0.1)]"
+                        className="border border-[#f8e5ff] bg-white rounded-2xl p-4 sm:p-5 lg:px-6 lg:py-6 flex flex-col sm:flex-row justify-center items-center gap-4 text-center sm:text-left
+                                transition-all duration-300 cursor-pointer
+                                shadow-[0_10px_30px_rgba(97,3,97,0.06)] 
+                                hover:-translate-y-1 
+                                hover:border-[#e6affc]
+                                hover:shadow-[0_15px_40px_rgba(97,3,97,0.12)]"
                     >
                         <img src={f.img} alt={f.title} className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0" />
                         <div>
-                            <h4 className="font-medium font-winkySans capitalize text-base md:text-lg text-gray-800">{f.title}</h4>
+                            <h4 className="font-medium font-winkySans capitalize text-base md:text-lg text-[#610361]">{f.title}</h4>
                             {f.sub && <p className="text-gray-500 font-winkySans text-xs md:text-sm mt-1 sm:mt-0">{f.sub}</p>}
                         </div>
                     </div>
