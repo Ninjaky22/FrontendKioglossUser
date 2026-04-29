@@ -41,15 +41,7 @@ export default function Home() {
                             >
                               ¡Comprar Ahora!
                             </Link>
-                            <Link
-                              to="/shop"
-                              className="bg-white/80 text-[#610361] px-7 py-3 md:px-9 md:py-4 font-semibold rounded-xl font-winkySans tracking-wide
-                                         border border-[#e6b7ff] shadow-[0_6px_18px_rgba(97,3,97,0.12)] transition-all duration-300
-                                         hover:-translate-y-1 hover:bg-white hover:border-[#c66be0]"
-                            >
-                              Ver novedades
-                            </Link>
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>

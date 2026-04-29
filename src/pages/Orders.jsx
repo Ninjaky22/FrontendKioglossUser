@@ -231,40 +231,36 @@ export default function Orders() {
         <div className="font-winkySans min-h-screen"
             style={{ background: 'linear-gradient(160deg, #fdf4ff 0%, #f5e8ff 40%, #fce7f3 100%)' }}>
 
-            {/* Decorative blobs */}
-            <div className="fixed bottom-0 left-0 w-80 h-80 rounded-full opacity-15 pointer-events-none"
-                style={{ background: 'radial-gradient(circle, #9333ea, transparent)', transform: 'translate(-40%, 40%)' }} />
-
+    
             <Breadcrumb items={[
                 { label: 'Inicio', path: '/', icon: 'fa-solid fa-house text-[#610361]' },
                 { label: 'Mis Pedidos' },
             ]} />
 
-            <div className="container py-10 px-4 max-w-4xl mx-auto relative">
+            <div className="container py-6 sm:py-10 px-4 sm:px-6 max-w-4xl mx-auto relative">
 
                 {/* Header */}
-                <div className="mb-10 flex items-end gap-4">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0"
-                        style={{ background: 'linear-gradient(135deg, #610361, #a21caf)' }}>
-                        <i className="fa-solid fa-bag-shopping text-white text-xl"></i>
+                <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0 bg-[#610361]">
+                        <i className="fa-solid fa-bag-shopping text-white text-lg sm:text-xl"></i>
                     </div>
                     <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#a21caf] opacity-70 mb-0.5">Tu historial</p>
-                        <h2 className="text-4xl font-bold text-[#610361] font-winkySans leading-none">Mis Pedidos</h2>
+                        <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#a21caf] opacity-70 mb-0.5">Tu historial</p>
+                        <h2 className="text-3xl sm:text-4xl font-bold text-[#610361] font-winkySans leading-none">Mis Pedidos</h2>
                     </div>
                 </div>
 
                 {/* Empty state */}
                 {orders.length === 0 ? (
-                    <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl p-16 text-center border border-purple-100">
-                        <div className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center"
+                    <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl p-8 sm:p-16 text-center border border-purple-100">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-5 sm:mb-6 flex items-center justify-center"
                             style={{ background: 'linear-gradient(135deg, #f3d5ff, #fce7f3)' }}>
-                            <i className="fa-solid fa-box-open text-4xl text-[#c084fc]"></i>
+                            <i className="fa-solid fa-box-open text-3xl sm:text-4xl text-[#c084fc]"></i>
                         </div>
-                        <h3 className="text-2xl font-bold text-[#610361] font-winkySans mb-2">Aún no tienes pedidos</h3>
-                        <p className="text-gray-400 font-winkySans text-sm mb-8">¡Explora nuestra tienda y encuentra algo que te encante!</p>
+                        <h3 className="text-xl sm:text-2xl font-bold text-[#610361] font-winkySans mb-2">Aún no tienes pedidos</h3>
+                        <p className="text-gray-400 font-winkySans text-sm mb-6 sm:mb-8">¡Explora nuestra tienda y encuentra algo que te encante!</p>
                         <Link to="/shop"
-                            className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl text-white font-winkySans font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+                            className="inline-flex items-center gap-2 px-7 sm:px-8 py-3 rounded-2xl text-white font-winkySans font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
                             style={{ background: 'linear-gradient(135deg, #610361, #a21caf)' }}>
                             <i className="fa-solid fa-sparkles"></i>
                             Comprar Ahora
@@ -278,17 +274,17 @@ export default function Orders() {
                                 style={{ animationDelay: `${idx * 60}ms` }}>
 
                                 {/* Order header strip */}
-                                <div className="px-6 py-4 flex flex-wrap items-center justify-between gap-3"
+                                <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3"
                                     style={{ background: 'linear-gradient(90deg, #faf0ff, #fdf4ff)' }}>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-2 sm:gap-3">
                                         {/* Order number badge */}
-                                        <div className="px-3 py-1 rounded-xl text-xs font-bold tracking-wider text-white"
-                                            style={{ background: 'linear-gradient(135deg, #610361, #a21caf)' }}>
+                                        <div className="px-3 py-1 rounded-xl text-[11px] sm:text-xs font-bold tracking-wider text-white bg-[#610361]">
+                                            
                                             #{String(order.id).padStart(4, '0')}
                                         </div>
 
                                         {/* Status badge */}
-                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold ${getStatusColor(order.status)}`}>
+                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] sm:text-xs font-semibold ${getStatusColor(order.status)}`}>
                                             <i className={`${getStatusIcon(order.status)} text-[10px]`}></i>
                                             {order.status}
                                         </span>
@@ -296,7 +292,7 @@ export default function Orders() {
 
                                     {/* PDF button */}
                                     <button onClick={() => downloadPDF(order)}
-                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-winkySans font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm hover:shadow"
+                                        className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-winkySans font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm hover:shadow"
                                         style={{ background: 'linear-gradient(135deg, #f3d5ff, #e9b8ff)', color: '#610361' }}>
                                         <i className="fa-solid fa-file-pdf"></i>
                                         Descargar PDF
@@ -304,12 +300,12 @@ export default function Orders() {
                                 </div>
 
                                 {/* Order body */}
-                                <div className="px-6 pb-6">
+                                <div className="px-4 sm:px-6 pb-5 sm:pb-6">
 
                                     {/* Total */}
-                                    <div className="flex items-center justify-between py-4 border-b border-purple-50">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-4 border-b border-purple-50">
                                         <span className="text-xs uppercase tracking-widest text-gray-400 font-winkySans">Total del pedido</span>
-                                        <span className="text-xl font-bold text-[#610361] font-winkySans">
+                                        <span className="text-lg sm:text-xl font-bold text-[#610361] font-winkySans">
                                             COP {Number(order.amount).toLocaleString('es-CO')}
                                         </span>
                                     </div>
@@ -319,7 +315,7 @@ export default function Orders() {
                                         <div className="mt-4 space-y-3">
                                             {order.shopping.map((item, i) => (
                                                 <div key={i}
-                                                    className="flex items-center gap-4 p-3 rounded-2xl transition-colors duration-200 hover:bg-purple-50/50 group/item">
+                                                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 rounded-2xl transition-colors duration-200 hover:bg-purple-50/50 group/item">
 
                                                     {/* Thumbnail */}
                                                     <Link to={`/product/${item.slug}`} className="shrink-0">
@@ -334,7 +330,7 @@ export default function Orders() {
                                                     </Link>
 
                                                     {/* Info */}
-                                                    <div className="flex-1 min-w-0">
+                                                    <div className="flex-1 min-w-0 w-full">
                                                         <Link to={`/product/${item.slug}`}
                                                             className="text-sm font-semibold text-[#610361] hover:text-[#a21caf] truncate block font-winkySans transition-colors duration-150">
                                                             {item.title}
@@ -354,7 +350,7 @@ export default function Orders() {
                                                     </div>
 
                                                     {/* Price & qty */}
-                                                    <div className="text-right shrink-0">
+                                                    <div className="text-right shrink-0 self-end sm:self-auto">
                                                         <div className="text-xs text-gray-400 font-winkySans mb-0.5">
                                                             <span className="inline-flex items-center gap-1">
                                                                 <i className="fa-solid fa-xmark text-[10px]"></i>

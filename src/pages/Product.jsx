@@ -252,8 +252,8 @@ export default function Product() {
             ]} />
 
             {/* ── Main product grid ── */}
-            <div className="container py-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white rounded-3xl shadow-sm border border-purple-100/60 p-6 md:p-10">
+            <div className="container py-6 sm:py-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 bg-white rounded-3xl shadow-sm border border-purple-100/60 p-5 sm:p-6 md:p-10">
 
                     {/* ── Left: Image gallery ── */}
                     <div className="space-y-4">
@@ -263,7 +263,7 @@ export default function Product() {
                             <img
                                 src={mainImage}
                                 alt={product.title || product.name}
-                                className="w-full h-[420px] object-contain p-6 transition-transform duration-500 group-hover:scale-[1.03]"
+                                className="w-full h-80 sm:h-[420px] object-contain p-5 sm:p-6 transition-transform duration-500 group-hover:scale-[1.03]"
                                 onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/products/product1.jpg'; }}
                             />
 
@@ -290,7 +290,7 @@ export default function Product() {
 
                             {/* Counter pill */}
                             {images.length > 1 && (
-                                <span className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                                <span className="absolute bottom-3 right-3 bg-white/85 text-[#610361] text-xs px-3 py-1 rounded-full shadow-md ring-1 ring-[#9b30a0]/20 backdrop-blur-sm">
                                     {imageIndex + 1} / {images.length}
                                 </span>
                             )}
@@ -303,7 +303,7 @@ export default function Product() {
                                     <button key={i} onClick={() => goToImage(i)}
                                         className={`shrink-0 w-[72px] h-[72px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                                             imageIndex === i
-                                                ? 'border-[#9b30a0] shadow-md shadow-purple-200 scale-105'
+                                                ? 'border-[#9b30a0] shadow-md shadow-purple-200 '
                                                 : 'border-transparent opacity-50 hover:opacity-90 hover:border-purple-200'
                                         }`}>
                                         <img src={img} alt={`img-${i}`} className="w-full h-full object-cover" />
@@ -344,7 +344,7 @@ export default function Product() {
 
                         {/* Title + stock */}
                         <div>
-                            <h2 className="text-3xl font-semibold font-winkySans text-[#610361] leading-tight mb-3">
+                            <h2 className="text-2xl sm:text-3xl font-semibold font-winkySans text-[#610361] leading-tight mb-3">
                                 {product.title || product.name}
                             </h2>
                             <StockBadge />
@@ -353,7 +353,7 @@ export default function Product() {
                         {/* Price */}
                         <div className="bg-purple-50 border border-purple-100 rounded-2xl px-5 py-2">
                             <p className="text-xs text-gray-400 font-winkySans mb-0.5">PRECIO</p>
-                            <p className="text-xl font-bold text-[#9b30a0] font-winkySans tracking-tight">
+                            <p className="text-lg sm:text-xl font-bold text-[#9b30a0] font-winkySans tracking-tight">
                                 COP {Number(product.price).toLocaleString()}
                             </p>
                         </div>
@@ -372,7 +372,7 @@ export default function Product() {
                                                     <th className="py-2.5 px-4 font-semibold text-gray-500 border-r border-gray-100 w-2/5 align-top text-xs uppercase tracking-wide">
                                                         {key}
                                                     </th>
-                                                    <td className="py-2.5 px-4 text-gray-700 wrap-break-word font-winkySans">
+                                                    <td className="py-2.5 px-4 text-gray-700 wrap-safe font-winkySans">
                                                         {value}
                                                     </td>
                                                 </tr>
@@ -428,37 +428,40 @@ export default function Product() {
                                     <i className="fa-solid fa-ban text-lg"></i> Producto agotado
                                 </div>
                             ) : (
-                                <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+                                <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch">
                                     {/* Qty stepper */}
-                                    <div className="flex border-2 border-[#9b30a0] rounded-xl text-[#610361] divide-x-2 divide-[#9b30a0] overflow-hidden h-12 shrink-0 shadow-sm">
+                                    <div className="grid grid-cols-3 border border-[#9b30a0]/40 bg-white rounded-xl sm:rounded-2xl text-[#610361] divide-x divide-[#9b30a0]/20 overflow-hidden h-11 sm:h-12 w-full sm:w-[150px] shrink-0 shadow-sm">
                                         <button onClick={() => setQty(q => Math.max(1, q - 1))}
-                                            className="h-full w-12 text-xl flex items-center justify-center hover:bg-[#9b30a0] hover:text-white transition-colors select-none">−</button>
-                                        <div className="h-full w-11 flex items-center justify-center font-bold text-[#9b30a0]">{qty}</div>
+                                            className="h-full w-full text-base sm:text-lg flex items-center justify-center hover:bg-[#f7e9ff] hover:text-[#9b30a0] transition-colors select-none leading-none">−</button>
+                                        <div className="h-full w-full flex items-center justify-center font-bold text-[#9b30a0] bg-[#fdf4ff] text-base sm:text-lg tabular-nums leading-none">{qty}</div>
                                         <button onClick={() => setQty(q => availableStock != null ? Math.min(availableStock, q + 1) : q + 1)}
-                                            className={`h-full w-12 text-xl flex items-center justify-center transition-colors select-none ${availableStock != null && qty >= availableStock ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[#9b30a0] hover:text-white'}`}
+                                            className={`h-full w-full text-base sm:text-lg flex items-center justify-center transition-colors select-none leading-none ${availableStock != null && qty >= availableStock ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[#f7e9ff] hover:text-[#9b30a0]'}`}
                                             disabled={availableStock != null && qty >= availableStock}>+</button>
                                     </div>
 
                                     {/* CTA buttons */}
-                                    <div className="flex gap-2 flex-1 h-12">
+                                    <div className="grid grid-cols-3 gap-2 sm:gap-2.5 flex-1">
                                         <button onClick={handleAddToCart}
                                             disabled={availableStock != null && (qty + cartQty) > availableStock}
-                                            className={`flex-1 bg-white text-[#9b30a0] border-2 border-[#9b30a0] font-semibold rounded-xl hover:bg-purple-50 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95 ${availableStock != null && (qty + cartQty) > availableStock ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                                            className={`w-full h-11 sm:h-12 bg-white text-[#9b30a0] border border-[#9b30a0]/50 font-semibold rounded-xl sm:rounded-2xl hover:bg-[#f7e9ff] transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 ${availableStock != null && (qty + cartQty) > availableStock ? 'opacity-40 cursor-not-allowed' : ''}`}>
                                             <i className="fa-solid fa-cart-plus text-sm"></i>
-                                            <span className="hidden xl:inline text-sm">Al carrito</span>
-                                            <span className="xl:hidden text-sm">Agregar</span>
+                                            <span className="sr-only">Agregar al carrito</span>
+                                            <span className="hidden md:inline lg:hidden text-sm">Agregar</span>
+                                            <span className="hidden lg:inline text-sm">Al carrito</span>
                                         </button>
 
                                         <button onClick={() => { handleAddToCart(); navigate('/checkout'); }}
                                             disabled={availableStock != null && (qty + cartQty) > availableStock}
-                                            className={`flex-1 bg-[#9b30a0] text-white font-semibold rounded-xl hover:bg-[#7b2585] transition-all flex items-center justify-center gap-2 shadow-md shadow-purple-200 active:scale-95 ${availableStock != null && (qty + cartQty) > availableStock ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                                            className={`w-full h-11 sm:h-12 bg-linear-to-r bg-[#9b30a0] text-white font-semibold rounded-xl sm:rounded-2xl hover:brightness-105 transition-all flex items-center justify-center gap-1.5 shadow-md shadow-purple-200 active:scale-95 ${availableStock != null && (qty + cartQty) > availableStock ? 'opacity-40 cursor-not-allowed' : ''}`}>
                                             <i className="fa-solid fa-bag-shopping text-sm"></i>
-                                            <span className="text-sm">Comprar</span>
+                                            <span className="sr-only">Comprar ahora</span>
+                                            <span className="hidden md:inline text-sm">Comprar</span>
                                         </button>
 
                                         <button onClick={handleAddToWishlist}
-                                            className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center border-2 transition-all shadow-sm active:scale-95 ${favorited ? 'bg-red-500 text-white border-red-500 shadow-md shadow-red-100' : 'bg-white text-gray-400 border-gray-200 hover:text-red-500 hover:border-red-400'}`}>
+                                            className={`w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center border transition-all shadow-sm active:scale-95 ${favorited ? 'bg-red-500 text-white border-red-500 shadow-md shadow-red-100' : 'bg-white text-gray-400 border-gray-200 hover:text-red-500 hover:border-red-400'}`}>
                                             <i className="fa-solid fa-heart"></i>
+                                            <span className="sr-only">Agregar a favoritos</span>
                                         </button>
                                     </div>
                                 </div>
@@ -482,32 +485,41 @@ export default function Product() {
                 </div>
 
                 {/* ── Descripción ── */}
-                <div className="mt-8 bg-white rounded-3xl shadow-sm border border-purple-100/60 p-8">
-                    <h3 className="flex items-center gap-2.5 text-lg font-bold text-[#610361] font-winkySans mb-5 pb-4 border-b border-purple-50">
-                        <span className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center ">
+                <div className="mt-8 bg-white rounded-3xl shadow-sm border border-purple-100/60 p-5 sm:p-8">
+                    <h3 className="flex items-center gap-2.5 text-base sm:text-lg font-bold text-[#610361] font-winkySans mb-4 sm:mb-5 pb-4 border-b border-purple-50">
+                        <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-50 flex items-center justify-center ">
                             <i className="fa-solid fa-circle-info text-[#9b30a0] text-sm"></i>
                         </span>
                         Descripción del Producto
                     </h3>
                     <div
-                        className="text-gray-700 font-winkySans leading-relaxed quill-content max-w-none wrap-break-word [&_img]:max-w-full [&_img]:h-auto [&_table]:w-full [&_table]:overflow-x-auto [&_iframe]:max-w-full"
+                        className="text-gray-700 font-winkySans leading-relaxed quill-content max-w-none wrap-safe text-sm sm:text-base [&_img]:max-w-full [&_img]:h-auto [&_table]:w-full [&_table]:overflow-x-auto [&_iframe]:max-w-full"
                         dangerouslySetInnerHTML={{ __html: product.description || '' }}
                     />
                 </div>
 
                 {/* ── Productos Relacionados ── */}
                 {relatedProducts && relatedProducts.length > 0 && (
-                    <div className="mt-10">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-1 h-7 bg-[#9b30a0] rounded-full"></div>
-                            <h2 className="text-2xl font-bold text-[#610361] font-winkySans">
-                                También te podría interesar
-                            </h2>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {relatedProducts.map(relProduct => (
-                                <ProductCard key={relProduct.id} product={relProduct} />
-                            ))}
+                    <div className="mt-10 relative overflow-hidden rounded-3xl border border-purple-100/70 bg-white p-5 sm:p-8 shadow-sm">
+                        <div className="absolute -top-20 -right-16 w-48 h-48 bg-purple-100/70 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-24 -left-16 w-56 h-56 bg-pink-100/60 rounded-full blur-3xl"></div>
+                        <div className="relative">
+                            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-1.5 h-7 bg-[#9b30a0] rounded-full"></div>
+                                    <div>
+                                        <h2 className="text-xl sm:text-2xl font-bold text-[#610361] font-winkySans">
+                                            También te podría interesar
+                                        </h2>
+                                        <p className="text-sm text-gray-500 font-winkySans">Selecciones que combinan con este producto.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {relatedProducts.map(relProduct => (
+                                    <ProductCard key={relProduct.id} product={relProduct} />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )}

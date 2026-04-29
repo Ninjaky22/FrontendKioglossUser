@@ -15,6 +15,9 @@ export default function Register() {
     const [distric, setDistric] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
+    const LIMITS = { nameMin: 3, phoneMin: 10 };
 
     // Redirect if already logged in
     useEffect(() => {
@@ -22,13 +25,43 @@ export default function Register() {
     }, [isAuthenticated, navigate]);
     const [error, setError] = useState('');
 
+    const toast = (icon, title, text = '') => Swal.fire({
+        toast: true, position: 'top-end', icon, title,
+        text: text || undefined,
+        showConfirmButton: false, timer: 3000, timerProgressBar: true,
+    });
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        const trimmedName = name.trim();
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+
+        if (!trimmedName || !trimmedEmail || !trimmedPassword) {
+            toast('warning', 'Completa los campos obligatorios');
+            return;
+        }
+        if (trimmedName.length < LIMITS.nameMin) {
+            toast('warning', 'Nombre muy corto', `Minimo ${LIMITS.nameMin} caracteres`);
+            return;
+        }
+        if (!emailRegex.test(trimmedEmail)) {
+            toast('warning', 'Correo invalido', 'Revisa el formato del email');
+            return;
+        }
+        if (!passwordRegex.test(trimmedPassword)) {
+            toast('warning', 'Contrasena insegura', 'Usa una mayuscula, un numero y un caracter especial');
+            return;
+        }
+        if (phoneNumber.trim() && phoneNumber.trim().length < LIMITS.phoneMin) {
+            toast('warning', 'Telefono muy corto', `Minimo ${LIMITS.phoneMin} digitos`);
+            return;
+        }
         setLoading(true);
         try {
             await register({
-                email, name, password, phoneNumber,
+                email: trimmedEmail, name: trimmedName, password, phoneNumber,
                 address: { street, streetNumber, distric },
                 account: { pointsPerPurchase: 0, isActive: true },
             });
@@ -64,39 +97,38 @@ export default function Register() {
 
             {/* Main */}
             <div
-                className="min-h-screen py-12 flex items-center justify-center relative overflow-hidden font-winkySans"
-                style={{ background: 'linear-gradient(160deg, #fdf4ff 0%, #f5e8ff 50%, #fce7f3 100%)' }}
+                className="min-h-screen py-8 sm:py-10 flex items-center justify-center relative overflow-hidden font-winkySans"
+                style={{ background: 'radial-gradient(1200px circle at 8% -10%, #ffffff 0%, #f6e8ff 42%, #fce7f3 100%)' }}
             >
-                <div className="relative w-full max-w-lg mx-4">
+                <div className="absolute -left-20 top-12 h-48 w-48 rounded-full bg-[#f3d7ff] opacity-70 blur-3xl"></div>
+                <div className="absolute -right-16 bottom-8 h-44 w-44 rounded-full bg-[#ffe1f2] opacity-70 blur-3xl"></div>
 
+                <div className="relative w-full max-w-[720px] mx-4">
                     {/* Card */}
-                    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-purple-100/60 overflow-hidden">
-
+                    <div className="bg-white/85 backdrop-blur rounded-3xl shadow-[0_28px_70px_rgba(97,3,97,0.22)] border border-white/70 overflow-hidden">
                         {/* Top accent bar */}
                         <div className="h-1.5 w-full" style={{ background: '#610361' }} />
 
-                        <div className="px-8 py-10 md:px-10">
-
+                        <div className="px-6 py-6 sm:px-8 sm:py-7">
                             {/* Header */}
-                            <div className="text-center mb-8">
-                                <div
-                                    className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg"
-                                    style={{ background: '#610361' }}
-                                >
-                                    <i className="fa-solid fa-user-plus text-white text-2xl"></i>
+                            <div className="text-center mb-4">
+                                <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg" style={{ background: '#610361' }}>
+                                    <i className="fa-solid fa-user-plus text-white text-lg"></i>
                                 </div>
-                                <h2 className="text-3xl font-extrabold text-[#610361] font-winkySans leading-tight">
-                                    Crear una Cuenta
-                                </h2>
-                                <p className="text-gray-400 mt-1 text-sm font-winkySans">
-                                    Regístrate para comprar y ver tus pedidos.
-                                </p>
-                            </div>                           
+                                <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-[#610361] font-winkySans leading-tight">Crear Cuenta</h2>
+                                <p className="text-sm text-gray-400 font-winkySans sm:block hidden">Regístrate para comprar y ver tus pedidos.</p>
+                            </div>
+
+                            {error && (
+                                <div className="mb-4 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600" aria-live="polite">
+                                    <i className="fa-solid fa-circle-exclamation mr-2"></i>
+                                    {error}
+                                </div>
+                            )}
 
                             {/* Form */}
                             <form onSubmit={handleSubmit}>
-                                <div className="space-y-5">
-
+                                <div className="grid gap-3 sm:grid-cols-2">
                                     {/* Nombre */}
                                     <div>
                                         <label className="text-xs uppercase tracking-widest font-semibold text-[#610361] mb-2 block font-winkySans">
@@ -107,10 +139,15 @@ export default function Register() {
                                                 <i className="fa-solid fa-circle-user text-sm"></i>
                                             </span>
                                             <input
-                                                type="text" value={name}
-                                                onChange={e => setName(e.target.value)} required
-                                                className="block w-full pl-11 pr-4 py-3 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
-                                                placeholder="Tu nombre completo"
+                                                type="text"
+                                                value={name}
+                                                onChange={(e) => {
+                                                    setName(e.target.value);
+                                                    if (error) setError('');
+                                                }}
+                                                required
+                                                className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                placeholder="Tu nombre"
                                             />
                                         </div>
                                     </div>
@@ -125,9 +162,16 @@ export default function Register() {
                                                 <i className="fa-solid fa-envelope text-sm"></i>
                                             </span>
                                             <input
-                                                type="email" value={email}
-                                                onChange={e => setEmail(e.target.value)} required
-                                                className="block w-full pl-11 pr-4 py-3 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                type="email"
+                                                value={email}
+                                                onChange={(e) => {
+                                                    setEmail(e.target.value);
+                                                    if (error) setError('');
+                                                }}
+                                                required
+                                                inputMode="email"
+                                                autoComplete="email"
+                                                className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="tucorreo@dominio.com"
                                             />
                                         </div>
@@ -143,18 +187,29 @@ export default function Register() {
                                                 <i className="fa-solid fa-lock text-sm"></i>
                                             </span>
                                             <input
-                                                type={showPassword ? 'text' : 'password'} value={password}
-                                                onChange={e => setPassword(e.target.value)} required
-                                                className="block w-full pl-11 pr-12 py-3 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                type={showPassword ? 'text' : 'password'}
+                                                value={password}
+                                                onChange={(e) => {
+                                                    setPassword(e.target.value);
+                                                    if (error) setError('');
+                                                }}
+                                                required
+                                                autoComplete="new-password"
+                                                className="block w-full pl-11 pr-12 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="••••••••"
                                             />
                                             <button
-                                                type="button" onClick={() => setShowPassword(!showPassword)}
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
                                                 className="absolute inset-y-0 right-0 flex items-center justify-center w-12 text-purple-300 hover:text-[#610361] transition-colors duration-200"
+                                                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                                             >
                                                 <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
                                             </button>
                                         </div>
+                                        <p className="mt-2 text-[11px] text-gray-400">
+                                            Debe incluir una mayuscula, un numero y un caracter especial.
+                                        </p>
                                     </div>
 
                                     {/* Teléfono */}
@@ -167,55 +222,71 @@ export default function Register() {
                                                 <i className="fa-solid fa-phone text-sm"></i>
                                             </span>
                                             <input
-                                                type="tel" value={phoneNumber}
-                                                onChange={e => setPhoneNumber(e.target.value)}
-                                                className="block w-full pl-11 pr-4 py-3 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                type="tel"
+                                                value={phoneNumber}
+                                                onChange={(e) => {
+                                                    setPhoneNumber(e.target.value);
+                                                    if (error) setError('');
+                                                }}
+                                                inputMode="tel"
+                                                autoComplete="tel"
+                                                className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="3001234567"
                                             />
                                         </div>
                                     </div>
 
                                     {/* Dirección */}
-                                    <div>
+                                    <div className="sm:col-span-2">
                                         <label className="text-xs uppercase tracking-widest font-semibold text-[#610361] mb-2 block font-winkySans">
                                             Dirección de Envío
                                         </label>
-                                        <div className="space-y-3">
-                                            <div className="relative">
+                                        <div className="grid gap-3 sm:grid-cols-2">
+                                            <div className="relative sm:col-span-2">
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-purple-300 pointer-events-none">
                                                     <i className="fa-solid fa-map-pin text-sm"></i>
                                                 </span>
                                                 <input
-                                                    type="text" value={street}
-                                                    onChange={e => setStreet(e.target.value)}
-                                                    className="block w-full pl-11 pr-4 py-3 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                    type="text"
+                                                    value={street}
+                                                    onChange={(e) => {
+                                                        setStreet(e.target.value);
+                                                        if (error) setError('');
+                                                    }}
+                                                    className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                     placeholder="Calle"
                                                 />
                                             </div>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <input
-                                                    type="text" value={streetNumber}
-                                                    onChange={e => setStreetNumber(e.target.value)}
-                                                    className="block w-full px-4 py-3 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
-                                                    placeholder="Número"
-                                                />
-                                                <input
-                                                    type="text" value={distric}
-                                                    onChange={e => setDistric(e.target.value)}
-                                                    className="block w-full px-4 py-3 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
-                                                    placeholder="Barrio"
-                                                />
-                                            </div>
+                                            <input
+                                                type="text"
+                                                value={streetNumber}
+                                                onChange={(e) => {
+                                                    setStreetNumber(e.target.value);
+                                                    if (error) setError('');
+                                                }}
+                                                className="block w-full px-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                placeholder="Numero"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={distric}
+                                                onChange={(e) => {
+                                                    setDistric(e.target.value);
+                                                    if (error) setError('');
+                                                }}
+                                                className="block w-full px-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                placeholder="Barrio"
+                                            />
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Submit */}
-                                <div className="mt-8">
+                                <div className="mt-5">
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full py-3 rounded-2xl text-white font-winkySans font-bold tracking-widest uppercase text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                                        className="w-full py-2.5 rounded-2xl text-white font-winkySans font-bold tracking-widest uppercase text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                                         style={{ background: '#610361' }}
                                     >
                                         {loading
@@ -227,7 +298,7 @@ export default function Register() {
                             </form>
 
                             {/* Login link */}
-                            <p className="mt-6 text-center text-sm text-gray-400 font-winkySans">
+                            <p className="mt-4 text-center text-xs text-gray-400 font-winkySans">
                                 ¿Ya tienes una cuenta?{' '}
                                 <Link to="/login" className="text-[#610361] font-bold hover:underline transition-colors duration-150">
                                     Inicia Sesión
@@ -237,7 +308,7 @@ export default function Register() {
                     </div>
 
                     {/* Subtle bottom note */}
-                    <p className="text-center text-[11px] text-gray-400 mt-4 font-winkySans tracking-wide">
+                    <p className="hidden sm:block text-center text-[11px] text-gray-400 mt-4 font-winkySans tracking-wide">
                         Kio Gloss · Tu tienda de belleza ✦
                     </p>
                 </div>
