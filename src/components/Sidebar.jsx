@@ -108,9 +108,9 @@ export default function Sidebar({ onFilterChange, selectedTags = [] }) {
                 }
             `}</style>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-[#f0d6fb] overflow-hidden">
-                {/* Header */}
-                <div className="bg-linear-to-r bg-[#610361] px-5 py-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-[#f0d6fb] overflow-hidden lg:block">
+                {/* Header PC */}
+                <div className="hidden lg:block bg-linear-to-r bg-[#610361] px-5 py-4">
                     <div className="flex items-center gap-2">
                         <i className="fa-solid fa-sliders text-white/80 text-sm"></i>
                         <h3 className="text-white font-bold text-base uppercase tracking-widest font-winkySans">
@@ -135,13 +135,13 @@ export default function Sidebar({ onFilterChange, selectedTags = [] }) {
                         </div>
 
                         {loading ? (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-1 gap-2 md:gap-1 animate-pulse">
+                            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-2 md:gap-1 animate-pulse">
                                 {[...Array(6)].map((_, i) => (
                                     <div key={i} className="h-9 md:h-10 bg-[#f3e8ff] rounded-xl w-full"></div>
                                 ))}
                             </div>
                         ) : tags.length > 0 ? (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-1 gap-2 md:gap-1 max-h-64 md:max-h-88 overflow-y-auto sidebar-scroll pr-1 pb-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-2 md:gap-1 max-h-[50vh] lg:max-h-[60vh] md:max-h-88 overflow-y-auto sidebar-scroll pr-1 pb-1">
                                 {tags.map(tag => (
                                     <div key={tag.id} className="w-full">
                                         <input
