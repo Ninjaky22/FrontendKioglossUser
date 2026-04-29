@@ -47,7 +47,7 @@ export default function ProductCard({ product }) {
                         htmlContainer: 'font-winkySans',
                         confirmButton: 'font-winkySans',
                         cancelButton: 'font-winkySans'
-                        }});
+            }});
             navigate(`/product/${slug}`);
             return;
         }
@@ -99,6 +99,25 @@ export default function ProductCard({ product }) {
         if (cartItem.quantity > 1) {
             updateQty(cartItem, -1);
         } else {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: 'Producto eliminado',
+                showConfirmButton: false,
+                timer: 1800,
+                timerProgressBar: true,
+                customClass: {
+                    title: 'font-winkySans',
+                    htmlContainer: 'font-winkySans',
+                    confirmButton: 'font-winkySans',
+                    cancelButton: 'font-winkySans',
+                    title: 'font-winkySans',
+                    htmlContainer: 'font-winkySans',
+                    confirmButton: 'font-winkySans',
+                    cancelButton: 'font-winkySans'
+                }
+            });
             removeItem(cartItem);
         }
     };
@@ -226,8 +245,8 @@ export default function ProductCard({ product }) {
 
                 {/* Badge: cantidad en carrito */}
                 {cartQty > 0 && (
-                    <span className="absolute top-2.5 left-2.5 bg-[#9b30a0] text-white text-[9px] lg:text-[10px] font-bold px-1.5 py-0.5 lg:px-2 lg:py-1 rounded-full flex items-center gap-1 shadow-md">
-                        <i className="fa-solid fa-cart-shopping text-[8px] lg:text-[9px]"></i>
+                    <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#9b30a0] text-white text-[7px] sm:text-[9px] lg:text-[10px] font-bold px-0.5 py-px sm:px-1.5 sm:py-0.5 lg:px-2 lg:py-1 rounded-full flex items-center gap-0.5 shadow-md">
+                        <i className="fa-solid fa-cart-shopping text-[6px] sm:text-[8px] lg:text-[9px]"></i>
                         {cartQty}
                     </span>
                 )}
@@ -270,19 +289,19 @@ export default function ProductCard({ product }) {
                             <i className="fa-solid fa-list text-[9px] lg:text-xs"></i>
                         </Link>
                     ) : cartQty > 0 ? (
-                        <div className="flex items-center justify-between sm:justify-center gap-0.5 shadow-sm rounded-lg overflow-hidden border border-gray-200 w-full sm:w-auto h-7 lg:h-9">
+                        <div className="flex items-center justify-between sm:justify-center gap-0.5 shadow-sm rounded-lg overflow-hidden border border-gray-200 w-full sm:w-auto h-5 sm:h-7 lg:h-9">
                             <button
                                 onClick={handleRemoveFromCart}
-                                className="flex-1 sm:w-7 lg:w-8 h-full flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors duration-150 active:scale-95 text-[11px] lg:text-sm font-bold"
+                                className="flex-1 sm:w-7 lg:w-8 h-full flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors duration-150 active:scale-95 text-[9px] sm:text-[11px] lg:text-sm font-bold"
                             >
-                                {cartQty === 1 ? <i className="fa-solid fa-trash-can text-[9px] lg:text-xs"></i> : '−'}
+                                {cartQty === 1 ? <i className="fa-solid fa-trash-can text-[7px] sm:text-[9px] lg:text-xs"></i> : '−'}
                             </button>
-                            <span className="w-8 sm:w-6 lg:w-8 h-full flex items-center justify-center bg-[#9b30a0] text-white text-[11px] lg:text-sm font-bold">
+                            <span className="w-6 sm:w-6 lg:w-8 h-full flex items-center justify-center bg-[#9b30a0] text-white text-[9px] sm:text-[11px] lg:text-sm font-bold">
                                 {cartQty}
                             </span>
                             <button
                                 onClick={handleAddToCart}
-                                className={`flex-1 sm:w-7 lg:w-8 h-full flex items-center justify-center bg-gray-50 text-gray-500 transition-colors duration-150 active:scale-95 text-[11px] lg:text-sm font-bold ${
+                                className={`flex-1 sm:w-7 lg:w-8 h-full flex items-center justify-center bg-gray-50 text-gray-500 transition-colors duration-150 active:scale-95 text-[9px] sm:text-[11px] lg:text-sm font-bold ${
                                     stock !== null && cartQty >= stock
                                         ? 'opacity-40 cursor-not-allowed'
                                         : 'hover:bg-purple-50 hover:text-[#9b30a0]'
