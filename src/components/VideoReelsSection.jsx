@@ -43,6 +43,27 @@ export default function VideoReelsSection() {
         }
     }, [videos]);
 
+    useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return undefined;
+
+        let resizeObserver;
+        if (typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(() => checkScroll());
+            resizeObserver.observe(el);
+        }
+
+        const handleResize = () => checkScroll();
+        window.addEventListener('resize', handleResize);
+
+        requestAnimationFrame(checkScroll);
+
+        return () => {
+            if (resizeObserver) resizeObserver.disconnect();
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [videos]);
+
     if (videos.length === 0) return null;
 
     return (
@@ -53,7 +74,9 @@ export default function VideoReelsSection() {
                 {/* ── Encabezado ── */}
                 <div className="mb-8 md:mb-10 flex flex-col md:flex-row items-center md:items-end justify-between gap-4 text-center md:text-left">
                     <div>
-                        <p className="text-sm font-bold text-[#9b30a0] uppercase tracking-widest mb-1">Comunidad</p>
+                        <span className="inline-flex items-center rounded-full bg-white/80 px-4 py-1 text-[11px] font-bold uppercase tracking-[0.3em] text-[#610361] border border-[#f1d7ff]">
+                            Comunidad
+                        </span>
                         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#610361] font-swash leading-tight">
                             Destacados en <span className="text-[#9b30a0] italic">videos</span>
                         </h2>
@@ -75,9 +98,10 @@ export default function VideoReelsSection() {
                         <ChevronLeft size={18} />
                     </button>
 
+                    {/* Carrusel */}
                     <div
                         ref={scrollContainerRef}
-                        className="flex items-start gap-4 md:gap-5 overflow-x-auto pb-4 snap-x snap-mandatory flex-1 pt-2"
+                        className="flex gap-4 md:gap-5 overflow-x-auto pb-4 snap-x snap-mandatory flex-1 pt-2"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {videos.map((video) => (

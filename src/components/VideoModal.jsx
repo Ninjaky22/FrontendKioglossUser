@@ -38,11 +38,11 @@ export default function VideoModal({ video, onClose }) {
 
     return createPortal(
         <div
-            className="fixed inset-0 bg-black/25 backdrop-blur-md z-9999 flex items-center justify-center p-2 sm:p-4 font-winkySans"
+            className="fixed inset-0 bg-black/50 backdrop-blur z-9999 flex items-center justify-center p-2 sm:p-4 font-winkySans"
             onClick={onClose}
         >
             <div
-                className="relative w-full max-w-[340px] sm:max-w-[400px] md:max-w-[420px] max-h-[90vh] sm:max-h-[85vh] animate-[scaleIn_0.2s_ease-out] flex flex-col"
+                className="relative w-full max-w-[340px] sm:max-w-[400px] md:max-w-[420px] lg:max-w-53 xl:max-w-[260px] 2xl:max-w-[280px] max-h-[90vh] sm:max-h-[85vh] lg:max-h-[82vh] xl:max-h-[80vh] animate-[scaleIn_0.2s_ease-out] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* ── Contenedor del video ── */}
@@ -80,7 +80,7 @@ export default function VideoModal({ video, onClose }) {
                                         width: '100%',
                                         height: isInstagram
                                             ? `calc(100% + ${INSTAGRAM_BAR_HEIGHT}px)`
-                                            : '80%',
+                                            : '100%',
                                         display: 'block',
                                     }}
                                     allow="autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
@@ -94,8 +94,8 @@ export default function VideoModal({ video, onClose }) {
                 </div>
 
                 {/* Hint */}
-                <p className="hidden sm:block text-center text-white/30 text-xs mt-3 font-winkySans">
-                    Presiona <kbd className="bg-white/10 px-1.5 py-0.5 rounded text-[10px]">Esc</kbd> o toca fuera para cerrar
+                <p className="hidden sm:block text-center text-white/60 text-xs md:text-sm mt-3 md:mt-4 font-winkySans">
+                    Presiona <kbd className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] md:text-xs">Esc</kbd> o toca fuera para cerrar
                 </p>
             </div>
         </div>,

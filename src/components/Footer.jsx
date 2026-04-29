@@ -58,51 +58,106 @@ export default function Footer() {
 
                         {/* ── Columna 2: Redirecciones ── */}
                         <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                            <h3 className="text-sm font-bold text-white uppercase tracking-widest font-winkySans mb-4 after:block after:w-8 after:h-0.5 after:bg-pink-300/60 after:mt-2 after:mx-auto sm:after:mx-0">
-                                Redirecciones
-                            </h3>
-                            <nav className="space-y-2.5">
-                                {[
-                                    { href: "/", label: "Inicio" },
-                                    { href: "/shop", label: "Productos" },
-                                    { href: "/wishlist", label: "Lista de deseos" },
-                                    { href: "/cart", label: "Carrito" },
-                                    { href: "/about", label: "Sobre Nosotros" },
-                                    { href: "/contact", label: "Contáctanos" },
-                                ].map(({ href, label }) => (
-                                    <a
-                                        key={href}
-                                        href={href}
-                                        className="text-base text-white/65 hover:text-white hover:translate-x-1 transition-all duration-300 flex items-center gap-1.5 justify-center sm:justify-start font-winkySans group"
-                                    >
-                                        <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 text-pink-300 text-xs">›</span>
-                                        {label}
-                                    </a>
-                                ))}
-                            </nav>
+                            <div className="w-full sm:hidden">
+                                <details className="group">
+                                    <summary className="text-sm font-bold text-white uppercase tracking-widest font-winkySans mb-4 list-none cursor-pointer relative text-center">
+                                        <span className="inline-block">Redirecciones</span>
+                                        <span className="text-pink-200 text-base transition-transform duration-300 group-open:rotate-180 absolute right-0 top-1/2 -translate-y-1/2">▾</span>
+                                    </summary>
+                                    <nav className="space-y-2.5 pb-2 overflow-hidden max-h-0 opacity-0 transition-all duration-400 ease-out group-open:max-h-80 group-open:opacity-100">
+                                        {[
+                                            { href: "/", label: "Inicio" },
+                                            { href: "/shop", label: "Productos" },
+                                            { href: "/wishlist", label: "Lista de deseos" },
+                                            { href: "/cart", label: "Carrito" },
+                                            { href: "/about", label: "Sobre Nosotros" },
+                                            { href: "/contact", label: "Contáctanos" },
+                                        ].map(({ href, label }) => (
+                                            <a
+                                                key={href}
+                                                href={href}
+                                                className="text-base text-white/65 hover:text-white hover:translate-x-1 transition-all duration-300 flex items-center gap-1.5 justify-center font-winkySans group"
+                                            >
+                                                <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 text-pink-300 text-xs">›</span>
+                                                {label}
+                                            </a>
+                                        ))}
+                                    </nav>
+                                </details>
+                            </div>
+                            <div className="hidden sm:flex sm:flex-col sm:items-start sm:text-left">
+                                <h3 className="text-sm font-bold text-white uppercase tracking-widest font-winkySans mb-4 after:block after:w-8 after:h-0.5 after:bg-pink-300/60 after:mt-2 after:mx-0">
+                                    Redirecciones
+                                </h3>
+                                <nav className="space-y-2.5">
+                                    {[
+                                        { href: "/", label: "Inicio" },
+                                        { href: "/shop", label: "Productos" },
+                                        { href: "/wishlist", label: "Lista de deseos" },
+                                        { href: "/cart", label: "Carrito" },
+                                        { href: "/about", label: "Sobre Nosotros" },
+                                        { href: "/contact", label: "Contáctanos" },
+                                    ].map(({ href, label }) => (
+                                        <a
+                                            key={href}
+                                            href={href}
+                                            className="text-base text-white/65 hover:text-white hover:translate-x-1 transition-all duration-300 flex items-center gap-1.5 justify-center sm:justify-start font-winkySans group"
+                                        >
+                                            <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 text-pink-300 text-xs">›</span>
+                                            {label}
+                                        </a>
+                                    ))}
+                                </nav>
+                            </div>
                         </div>
 
                         {/* ── Columna 3: Tu cuenta ── */}
                         <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                            <h3 className="text-sm font-bold text-white uppercase tracking-widest font-winkySans mb-4 after:block after:w-8 after:h-0.5 after:bg-pink-300/60 after:mt-2 after:mx-auto sm:after:mx-0">
-                                Tu cuenta
-                            </h3>
-                            <nav className="space-y-2.5">
-                                {[
-                                    { href: "/login", label: "Inicia Sesión" },
-                                    { href: "/register", label: "Registrate" },
-                                    { href: "/account", label: "Cuenta" },
-                                ].map(({ href, label }) => (
-                                    <a
-                                        key={href}
-                                        href={href}
-                                        className="text-base text-white/65 hover:text-white hover:translate-x-1 transition-all duration-300 flex items-center gap-1.5 justify-center sm:justify-start font-winkySans group"
-                                    >
-                                        <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 text-pink-300 text-xs">›</span>
-                                        {label}
-                                    </a>
-                                ))}
-                            </nav>
+                            <div className="w-full sm:hidden">
+                                <details className="group">
+                                    <summary className="text-sm font-bold text-white uppercase tracking-widest font-winkySans mb-4 list-none cursor-pointer relative text-center">
+                                        <span className="inline-block">Tu cuenta</span>
+                                        <span className="text-pink-200 text-base transition-transform duration-300 group-open:rotate-180 absolute right-0 top-1/2 -translate-y-1/2">▾</span>
+                                    </summary>
+                                    <nav className="space-y-2.5 pb-2 overflow-hidden max-h-0 opacity-0 transition-all duration-400 ease-out group-open:max-h-80 group-open:opacity-100">
+                                        {[
+                                            { href: "/login", label: "Inicia Sesión" },
+                                            { href: "/register", label: "Registrate" },
+                                            { href: "/account", label: "Cuenta" },
+                                        ].map(({ href, label }) => (
+                                            <a
+                                                key={href}
+                                                href={href}
+                                                className="text-base text-white/65 hover:text-white hover:translate-x-1 transition-all duration-300 flex items-center gap-1.5 justify-center font-winkySans group"
+                                            >
+                                                <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 text-pink-300 text-xs">›</span>
+                                                {label}
+                                            </a>
+                                        ))}
+                                    </nav>
+                                </details>
+                            </div>
+                            <div className="hidden sm:flex sm:flex-col sm:items-start sm:text-left">
+                                <h3 className="text-sm font-bold text-white uppercase tracking-widest font-winkySans mb-4 after:block after:w-8 after:h-0.5 after:bg-pink-300/60 after:mt-2 after:mx-0">
+                                    Tu cuenta
+                                </h3>
+                                <nav className="space-y-2.5">
+                                    {[
+                                        { href: "/login", label: "Inicia Sesión" },
+                                        { href: "/register", label: "Registrate" },
+                                        { href: "/account", label: "Cuenta" },
+                                    ].map(({ href, label }) => (
+                                        <a
+                                            key={href}
+                                            href={href}
+                                            className="text-base text-white/65 hover:text-white hover:translate-x-1 transition-all duration-300 flex items-center gap-1.5 justify-center sm:justify-start font-winkySans group"
+                                        >
+                                            <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 text-pink-300 text-xs">›</span>
+                                            {label}
+                                        </a>
+                                    ))}
+                                </nav>
+                            </div>
                         </div>
 
                         {/* ── Columna 4: Información ── */}
