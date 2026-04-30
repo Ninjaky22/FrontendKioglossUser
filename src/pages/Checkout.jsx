@@ -239,7 +239,7 @@ export default function Checkout() {
                     </div>
 
                     {/* ── Columna derecha – Resumen ── */}
-                    <div className="sticky top-6 space-y-4">
+                    <div className="lg:sticky lg:top-6 space-y-4">
 
                         <div className="bg-white rounded-2xl border border-[#e8d5e8] shadow-sm overflow-hidden">
 
