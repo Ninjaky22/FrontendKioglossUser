@@ -23,7 +23,7 @@ export default function Login() {
         setError('');
         const trimmedEmail = email.trim();
         if (!emailRegex.test(trimmedEmail)) {
-            setError('Ingresa un correo valido');
+            setError('Ingresa un correo válido');
             return;
         }
         setLoading(true);
@@ -36,11 +36,11 @@ export default function Login() {
             });
             navigate('/account');
         } catch (err) {
-            setError(msg);
             Swal.fire({
                 toast: true, position: 'top-end', icon: 'error',
-                title: msg,
-                showConfirmButton: false, timer: 3000, timerProgressBar: true,
+                title: 'Error',
+                text: 'Credenciales incorrectas, intenta de nuevo.',
+                showConfirmButton: false, timer: 2000, timerProgressBar: true,
             });
         } finally {
             setLoading(false);

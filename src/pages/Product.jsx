@@ -361,7 +361,7 @@ export default function Product() {
                         {/* Ficha Técnica */}
                         {product.attributes && Object.keys(product.attributes).length > 0 && (
                             <div>
-                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 font-winkySans">
                                     Especificaciones
                                 </h3>
                                 <div className="rounded-xl border border-gray-100 overflow-hidden text-sm">

@@ -76,7 +76,7 @@ export default function Register() {
             setError(msg);
             Swal.fire({
                 toast: true, position: 'top-end', icon: 'error',
-                title: 'Correo o Número ya registrado. Inicia sesion o usa otro.',
+                title: 'Correo o Número ya registrado, intenta con otro.',
                 showConfirmButton: false, timer: 3000, timerProgressBar: true,
             });
         } finally {
@@ -118,13 +118,6 @@ export default function Register() {
                                 <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-[#610361] font-winkySans leading-tight">Crear Cuenta</h2>
                                 <p className="text-sm text-gray-400 font-winkySans sm:block hidden">Regístrate para comprar y ver tus pedidos.</p>
                             </div>
-
-                            {error && (
-                                <div className="mb-4 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600" aria-live="polite">
-                                    <i className="fa-solid fa-circle-exclamation mr-2"></i>
-                                    {error}
-                                </div>
-                            )}
 
                             {/* Form */}
                             <form onSubmit={handleSubmit}>
