@@ -137,7 +137,7 @@ export default function Header() {
         <>
             <header className="py-4 bg-white shadow-sm relative z-40">
                 <div className="container flex flex-wrap items-center justify-between gap-y-3">
-                    <Link to="/" className="w-1/2 md:w-auto order-1 shrink-0"><img src="/assets/images/logo.png" alt="Logo" className="w-32 md:w-48" /></Link>
+                    <Link to="/" className="w-1/2 md:w-auto order-1 shrink-0"><img src="/assets/images/logoPag.png" alt="Logo" className="w-32 md:w-48" /></Link>
 
                     {/* ── Barra de búsqueda con autocomplete ── */}
                     <div className="order-3 w-full md:max-w-xl relative flex md:order-2 mt-1 md:mt-0" ref={searchRef}>
