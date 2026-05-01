@@ -187,11 +187,11 @@ export default function ProductCard({ product }) {
         <div className="bg-white rounded-2xl overflow-hidden group shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-gray-100/80 flex flex-col">
 
             {/* ── Imagen ── */}
-            <div className="relative aspect-4/3 overflow-hidden bg-gray-50">
+            <div className="relative aspect-3/2 sm:aspect-4/3 lg:aspect-5/3 overflow-hidden">
                 <img
                     src={image}
                     alt={name}
-                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${outOfStock ? 'opacity-40 grayscale' : ''}`}
+                    className={`w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 ${outOfStock ? 'opacity-40 grayscale' : ''}`}
                     onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/products/product1.jpg'; }}
                 />
 
@@ -260,18 +260,18 @@ export default function ProductCard({ product }) {
             </div>
 
             {/* ── Info ── */}
-            <div className="p-2.5 lg:p-4 flex flex-col flex-1 gap-2 lg:gap-3">
+            <div className="p-2.5 lg:p-3 flex flex-col flex-1 gap-2 lg:gap-3">
 
                 {/* Nombre */}
                 <Link to={`/product/${slug}`}>
-                    <h4 className="font-semibold text-[13px] lg:text-[15px] leading-snug text-gray-800 hover:text-[#9b30a0] transition-colors duration-200 line-clamp-2 font-winkySans">
+                    <h4 className="font-semibold text-[13px] lg:text-[14px] leading-snug text-gray-800 hover:text-[#9b30a0] transition-colors duration-200 line-clamp-2 font-winkySans">
                         {name}
                     </h4>
                 </Link>
 
                 {/* Precio + Acción */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2 mt-auto pt-2 border-t border-gray-100">
-                    <p className="text-[14px] lg:text-lg font-bold text-[#9b30a0] font-winkySans tracking-tight">
+                    <p className="text-[14px] lg:text-[16px] font-bold text-[#9b30a0] font-winkySans tracking-tight">
                         COP {Number(price).toLocaleString()}
                     </p>
 
@@ -289,22 +289,22 @@ export default function ProductCard({ product }) {
                             <i className="fa-solid fa-list text-[9px] lg:text-xs"></i>
                         </Link>
                     ) : cartQty > 0 ? (
-                        <div className="flex items-center justify-between sm:justify-center gap-0.5 shadow-sm rounded-lg overflow-hidden border border-gray-200 w-full sm:w-auto h-5 sm:h-7 lg:h-9">
+                        <div className="inline-flex w-full sm:w-auto items-center justify-between sm:justify-center gap-1 sm:gap-1.5 bg-white/90 border border-purple-200 rounded-full px-1.5 py-1 shadow-[0_6px_18px_-12px_rgba(155,48,160,0.5)]">
                             <button
                                 onClick={handleRemoveFromCart}
-                                className="flex-1 sm:w-7 lg:w-8 h-full flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors duration-150 active:scale-95 text-[9px] sm:text-[11px] lg:text-sm font-bold"
+                                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-50 text-[#610361] hover:bg-red-50 hover:text-red-600 transition-colors duration-150 active:scale-95 text-[8px] sm:text-[10px] lg:text-[11px] font-bold"
                             >
-                                {cartQty === 1 ? <i className="fa-solid fa-trash-can text-[7px] sm:text-[9px] lg:text-xs"></i> : '−'}
+                                {cartQty === 1 ? <i className="fa-solid fa-trash-can text-[8px] sm:text-[10px] lg:text-[11px]"></i> : '−'}
                             </button>
-                            <span className="w-6 sm:w-6 lg:w-8 h-full flex items-center justify-center bg-[#9b30a0] text-white text-[9px] sm:text-[11px] lg:text-sm font-bold">
+                            <span className="min-w-6 sm:min-w-7 h-5 sm:h-6 px-1.5 rounded-full bg-[#9b30a0] text-white text-[9px] sm:text-[10px] lg:text-[11px] font-bold flex items-center justify-center shadow-inner">
                                 {cartQty}
                             </span>
                             <button
                                 onClick={handleAddToCart}
-                                className={`flex-1 sm:w-7 lg:w-8 h-full flex items-center justify-center bg-gray-50 text-gray-500 transition-colors duration-150 active:scale-95 text-[9px] sm:text-[11px] lg:text-sm font-bold ${
+                                className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-50 text-[#610361] transition-colors duration-150 active:scale-95 text-[8px] sm:text-[10px] lg:text-[11px] font-bold ${
                                     stock !== null && cartQty >= stock
                                         ? 'opacity-40 cursor-not-allowed'
-                                        : 'hover:bg-purple-50 hover:text-[#9b30a0]'
+                                        : 'hover:bg-[#f3d7ff] hover:text-[#9b30a0]'
                                 }`}
                                 disabled={stock !== null && cartQty >= stock}
                             >
@@ -314,10 +314,10 @@ export default function ProductCard({ product }) {
                     ) : (
                         <button
                             onClick={handleAddToCart}
-                            className="flex items-center justify-center sm:justify-start gap-1 bg-[#9b30a0] text-white text-[11px] lg:text-sm px-2 lg:px-3 py-1.5 lg:py-2 rounded-lg hover:bg-[#7b2585] transition-all duration-200 active:scale-95 shadow-sm w-full sm:w-auto h-7 lg:h-9"
+                            className="flex items-center justify-center sm:justify-start gap-1 bg-[#9b30a0] text-white text-[11px] lg:text-sm px-2 lg:px-3 py-1.5 lg:py-2 rounded-lg hover:bg-[#7b2585] transition-all duration-200 active:scale-95 shadow-sm w-full sm:w-auto h-7 lg:h-7"
                         >
                             <i className="fa-solid fa-cart-shopping text-[9px] lg:text-xs"></i>
-                            <span className="font-medium">Agregar</span>
+                            <span className="font-medium"></span>
                         </button>
                     )}
                     </div>
