@@ -147,91 +147,101 @@ export default function ProductCard({ product }) {
                      setFavorited(false);
                     Swal.fire({ toast: true, 
                         position: 'top-end', icon: 'info', 
-                        title: 'Eliminado de favoritos', 
-                        showConfirmButton: false, 
-                        timer: 2000, timerProgressBar: true,
+                        title: 'Eliminado de favoritos',
+                        showConfirmButton: false, timer: 1500, timerProgressBar: true,
                         customClass: {
                             title: 'font-winkySans',
                             htmlContainer: 'font-winkySans',
                             confirmButton: 'font-winkySans',
-                            cancelButton: 'font-winkySans',
-                            title: 'font-winkySans',
-                            htmlContainer: 'font-winkySans',
-                            confirmButton: 'font-winkySans',
                             cancelButton: 'font-winkySans'
-                        }});
+                        }
+                    });
                 }
             } else {
-                const data = await productService.addFavorite(accountId, product.id);
+                await productService.addFavorite(accountId, product.id);
+                addFavoriteId(product.id);
                 setFavorited(true);
-                addFavoriteId(product.id, data?.idFa);
-                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: '¡Agregado a favoritos!', showConfirmButton: false, timer: 2000, timerProgressBar: true,customClass: {
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans',
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans'
-            } });
+                Swal.fire({ toast: true, 
+                    position: 'top-end', icon: 'success', 
+                    title: '¡Agregado a favoritos!',
+                    showConfirmButton: false, timer: 1500, timerProgressBar: true,
+                    customClass: {
+                        title: 'font-winkySans',
+                        htmlContainer: 'font-winkySans',
+                        confirmButton: 'font-winkySans',
+                        cancelButton: 'font-winkySans'
+                    }
+                });
             }
-        } catch (e) {
-            console.error('Error toggling favorite', e);
         } finally {
             setAdding(false);
         }
     };
 
     return (
-        <div className="bg-white rounded-2xl overflow-hidden group shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-gray-100/80 flex flex-col">
+        <div className="bg-white rounded-2xl overflow-hidden group shadow-[0_2px_16px_-4px_rgba(155,48,160,0.12)] hover:shadow-[0_8px_32px_-8px_rgba(155,48,160,0.28)] hover:-translate-y-1 transition-all duration-300 border border-purple-100/60 flex flex-col">
 
             {/* ── Imagen ── */}
-            <div className="relative aspect-3/2 sm:aspect-4/3 lg:aspect-5/3 overflow-hidden">
+            {/*
+                FIX CLAVE: aspect-square + object-cover
+                Cualquier imagen (vertical u horizontal) se recorta para llenar
+                el cuadrado perfectamente, sin espacios vacíos ni deformación.
+                El fondo rosa suave (bg-pink-50) evita el vacío blanco si la
+                imagen tiene zonas transparentes.
+            */}
+            <div className="relative aspect-square overflow-hidden bg-pink-50/60">
                 <img
                     src={image}
                     alt={name}
-                    className={`w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 ${outOfStock ? 'opacity-40 grayscale' : ''}`}
+                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-108 ${outOfStock ? 'opacity-40 grayscale' : ''}`}
                     onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/products/product1.jpg'; }}
                 />
 
                 {/* Overlay agotado */}
                 {outOfStock ? (
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/35 flex flex-col items-center justify-center gap-3">
                         <span className="bg-red-600 text-white font-bold text-sm px-5 py-2 rounded-full font-winkySans shadow-lg tracking-wide">
                             Agotado
                         </span>
+                        <Link
+                            to={`/product/${slug}`}
+                            className="inline-flex items-center gap-2 bg-white/95 text-[#9b30a0] text-xs font-semibold px-4 py-2 rounded-full shadow-md hover:bg-[#9b30a0] hover:text-white transition-all"
+                            title="Ver detalles"
+                        >
+                            <i className="fa-solid fa-magnifying-glass text-[10px]"></i>
+                            Ver detalles
+                        </Link>
                     </div>
                 ) : (
                     /* Overlay acciones */
-                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent flex items-end justify-center pb-3 lg:pb-6 gap-2 lg:gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
+                    <div className="absolute inset-0 bg-linear-to-t from-black/55 via-black/10 to-transparent flex items-end justify-center pb-3 lg:pb-4 gap-2 lg:gap-2.5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
                         <Link
                             to={`/product/${slug}`}
-                            className="w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#9b30a0] hover:bg-[#9b30a0] hover:text-white hover:scale-110 transition-all duration-200 shadow"
+                            className="w-7 h-7 lg:w-9 lg:h-9 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center text-[#9b30a0] hover:bg-[#9b30a0] hover:text-white hover:scale-110 transition-all duration-200 shadow-md"
                             title="Ver producto"
                         >
-                            <i className="fa-solid fa-magnifying-glass text-[9px] lg:text-sm"></i>
+                            <i className="fa-solid fa-magnifying-glass text-[9px] lg:text-xs"></i>
                         </Link>
                         <button
                             onClick={handleFavorite}
-                            className={`w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-200 shadow ${
+                            className={`w-7 h-7 lg:w-9 lg:h-9 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-200 shadow-md ${
                                 favorited
                                     ? 'bg-red-500 text-white'
-                                    : 'bg-white/90 backdrop-blur-sm text-[#9b30a0] hover:bg-red-500 hover:text-white'
+                                    : 'bg-white/95 backdrop-blur-sm text-[#9b30a0] hover:bg-red-500 hover:text-white'
                             }`}
                             title={favorited ? 'Quitar de favoritos' : 'Agregar a lista de deseados'}
                         >
-                            <i className={`${favorited ? 'fa-solid' : 'fa-regular'} fa-heart text-[9px] lg:text-sm`}></i>
+                            <i className={`${favorited ? 'fa-solid' : 'fa-regular'} fa-heart text-[9px] lg:text-xs`}></i>
                         </button>
                         <button
                             onClick={handleAddToCart}
-                            className={`w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#9b30a0] hover:bg-[#9b30a0] hover:text-white hover:scale-110 transition-all duration-200 shadow ${
+                            className={`w-7 h-7 lg:w-9 lg:h-9 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center text-[#9b30a0] hover:bg-[#9b30a0] hover:text-white hover:scale-110 transition-all duration-200 shadow-md ${
                                 stock !== null && cartQty >= stock ? 'opacity-40 cursor-not-allowed' : ''
                             }`}
                             title="Agregar al carrito"
                             disabled={stock !== null && cartQty >= stock}
                         >
-                            <i className="fa-solid fa-cart-shopping text-[9px] lg:text-sm"></i>
+                            <i className="fa-solid fa-cart-shopping text-[9px] lg:text-xs"></i>
                         </button>
                     </div>
                 )}
@@ -260,7 +270,7 @@ export default function ProductCard({ product }) {
             </div>
 
             {/* ── Info ── */}
-            <div className="p-2.5 lg:p-3 flex flex-col flex-1 gap-2 lg:gap-3">
+            <div className="p-3 lg:p-4 flex flex-col flex-1 gap-2.5">
 
                 {/* Nombre */}
                 <Link to={`/product/${slug}`}>
@@ -269,39 +279,42 @@ export default function ProductCard({ product }) {
                     </h4>
                 </Link>
 
+                {/* Separador decorativo */}
+                <div className="h-px bg-linear-to-r from-purple-100 via-pink-100 to-transparent" />
+
                 {/* Precio + Acción */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2 mt-auto pt-2 border-t border-gray-100">
-                    <p className="text-[14px] lg:text-[16px] font-bold text-[#9b30a0] font-winkySans tracking-tight">
+                <div className="flex items-center justify-between gap-2 mt-auto">
+                    <p className="text-[15px] lg:text-[17px] font-bold text-[#9b30a0] font-winkySans tracking-tight leading-none">
                         COP {Number(price).toLocaleString()}
                     </p>
 
-                    <div className="w-full sm:w-auto">
+                    <div className="shrink-0">
                     {outOfStock ? (
-                        <span className="text-[10px] lg:text-xs text-red-500 font-semibold font-winkySans bg-red-50 border border-red-100 px-2 py-1 lg:px-3 lg:py-1.5 rounded-lg w-full sm:w-auto text-center block sm:inline-block">
+                        <span className="text-[10px] lg:text-xs text-red-500 font-semibold font-winkySans bg-red-50 border border-red-100 px-2 py-1 lg:px-3 lg:py-1.5 rounded-lg text-center block">
                             Sin stock
                         </span>
                     ) : product.hasVariants ? (
                         <Link
                             to={`/product/${slug}`}
-                            className="flex items-center justify-center sm:justify-start gap-1 bg-[#9b30a0] text-white text-[11px] lg:text-sm px-2 lg:px-3 py-1.5 lg:py-2 rounded-lg hover:bg-[#7b2585] transition-all duration-200 active:scale-95 shadow-sm w-full sm:w-auto"
+                            className="flex items-center justify-center gap-1.5 bg-[#9b30a0] text-white text-[11px] lg:text-xs px-3 py-1.5 lg:py-2 rounded-xl hover:bg-[#7b2585] transition-all duration-200 active:scale-95 shadow-sm font-winkySans font-medium"
                         >
                             <span>Opciones</span>
-                            <i className="fa-solid fa-list text-[9px] lg:text-xs"></i>
+                            <i className="fa-solid fa-list text-[9px] lg:text-[10px]"></i>
                         </Link>
                     ) : cartQty > 0 ? (
-                        <div className="inline-flex w-full sm:w-auto items-center justify-between sm:justify-center gap-1 sm:gap-1.5 bg-white/90 border border-purple-200 rounded-full px-1.5 py-1 shadow-[0_6px_18px_-12px_rgba(155,48,160,0.5)]">
+                        <div className="inline-flex items-center gap-1 sm:gap-1.5 bg-purple-50 border border-purple-200 rounded-full px-1.5 py-1 shadow-sm">
                             <button
                                 onClick={handleRemoveFromCart}
-                                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-50 text-[#610361] hover:bg-red-50 hover:text-red-600 transition-colors duration-150 active:scale-95 text-[8px] sm:text-[10px] lg:text-[11px] font-bold"
+                                className="w-6 h-6 rounded-full bg-white text-[#610361] hover:bg-red-50 hover:text-red-600 transition-colors duration-150 active:scale-95 text-[10px] font-bold shadow-sm"
                             >
-                                {cartQty === 1 ? <i className="fa-solid fa-trash-can text-[8px] sm:text-[10px] lg:text-[11px]"></i> : '−'}
+                                {cartQty === 1 ? <i className="fa-solid fa-trash-can text-[9px]"></i> : '−'}
                             </button>
-                            <span className="min-w-6 sm:min-w-7 h-5 sm:h-6 px-1.5 rounded-full bg-[#9b30a0] text-white text-[9px] sm:text-[10px] lg:text-[11px] font-bold flex items-center justify-center shadow-inner">
+                            <span className="min-w-6 h-6 px-1.5 rounded-full bg-[#9b30a0] text-white text-[10px] font-bold flex items-center justify-center">
                                 {cartQty}
                             </span>
                             <button
                                 onClick={handleAddToCart}
-                                className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-50 text-[#610361] transition-colors duration-150 active:scale-95 text-[8px] sm:text-[10px] lg:text-[11px] font-bold ${
+                                className={`w-6 h-6 rounded-full bg-white text-[#610361] transition-colors duration-150 active:scale-95 text-[10px] font-bold shadow-sm ${
                                     stock !== null && cartQty >= stock
                                         ? 'opacity-40 cursor-not-allowed'
                                         : 'hover:bg-[#f3d7ff] hover:text-[#9b30a0]'
@@ -314,10 +327,10 @@ export default function ProductCard({ product }) {
                     ) : (
                         <button
                             onClick={handleAddToCart}
-                            className="flex items-center justify-center sm:justify-start gap-1 bg-[#9b30a0] text-white text-[11px] lg:text-sm px-2 lg:px-3 py-1.5 lg:py-2 rounded-lg hover:bg-[#7b2585] transition-all duration-200 active:scale-95 shadow-sm w-full sm:w-auto h-7 lg:h-7"
+                            className="flex items-center justify-center gap-1.5 bg-[#9b30a0] text-white text-[11px] lg:text-xs px-3 py-1.5 lg:py-2 rounded-xl hover:bg-[#7b2585] transition-all duration-200 active:scale-95 shadow-sm font-winkySans font-medium"
                         >
-                            <i className="fa-solid fa-cart-shopping text-[9px] lg:text-xs"></i>
-                            <span className="font-medium"></span>
+                            <i className="fa-solid fa-cart-shopping text-[9px] lg:text-[10px]"></i>
+                            <span>Agregar</span>
                         </button>
                     )}
                     </div>
