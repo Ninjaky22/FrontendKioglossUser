@@ -13,6 +13,8 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const emailInvalid = error === 'Ingresa un correo valido';
+    const EMAIL_MAX = 254;
+    const PASSWORD_MAX = 20;
 
     useEffect(() => {
         if (isAuthenticated) navigate('/account');
@@ -102,10 +104,11 @@ export default function Login() {
                                                 id="email"
                                                 value={email}
                                                 onChange={(e) => {
-                                                    setEmail(e.target.value);
+                                                    setEmail(e.target.value.slice(0, EMAIL_MAX));
                                                     if (error) setError('');
                                                 }}
                                                 required
+                                                maxLength={EMAIL_MAX}
                                                 inputMode="email"
                                                 autoComplete="email"
                                                 aria-invalid={emailInvalid}
@@ -132,10 +135,11 @@ export default function Login() {
                                                 id="password"
                                                 value={password}
                                                 onChange={(e) => {
-                                                    setPassword(e.target.value);
+                                                    setPassword(e.target.value.slice(0, PASSWORD_MAX));
                                                     if (error) setError('');
                                                 }}
                                                 required
+                                                maxLength={PASSWORD_MAX}
                                                 autoComplete="current-password"
                                                 className="block w-full pl-11 pr-12 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#a21caf]/30 focus:border-[#a21caf] transition font-winkySans text-sm outline-none"
                                                 placeholder="••••••••"

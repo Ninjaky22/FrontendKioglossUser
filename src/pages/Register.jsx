@@ -17,7 +17,17 @@ export default function Register() {
     const [loading, setLoading] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
-    const LIMITS = { nameMin: 3, phoneMin: 10 };
+    const LIMITS = {
+        nameMin: 3,
+        nameMax: 50,
+        phoneMin: 10,
+        phoneMax: 10,
+        emailMax: 254,
+        passwordMax: 20,
+        streetMax: 60,
+        streetNumberMax: 10,
+        districMax: 50,
+    };
 
     // Redirect if already logged in
     useEffect(() => {
@@ -135,10 +145,11 @@ export default function Register() {
                                                 type="text"
                                                 value={name}
                                                 onChange={(e) => {
-                                                    setName(e.target.value);
+                                                    setName(e.target.value.slice(0, LIMITS.nameMax));
                                                     if (error) setError('');
                                                 }}
                                                 required
+                                                maxLength={LIMITS.nameMax}
                                                 className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="Tu nombre"
                                             />
@@ -158,10 +169,11 @@ export default function Register() {
                                                 type="email"
                                                 value={email}
                                                 onChange={(e) => {
-                                                    setEmail(e.target.value);
+                                                    setEmail(e.target.value.slice(0, LIMITS.emailMax));
                                                     if (error) setError('');
                                                 }}
                                                 required
+                                                maxLength={LIMITS.emailMax}
                                                 inputMode="email"
                                                 autoComplete="email"
                                                 className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
@@ -183,10 +195,11 @@ export default function Register() {
                                                 type={showPassword ? 'text' : 'password'}
                                                 value={password}
                                                 onChange={(e) => {
-                                                    setPassword(e.target.value);
+                                                    setPassword(e.target.value.slice(0, LIMITS.passwordMax));
                                                     if (error) setError('');
                                                 }}
                                                 required
+                                                maxLength={LIMITS.passwordMax}
                                                 autoComplete="new-password"
                                                 className="block w-full pl-11 pr-12 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="••••••••"
@@ -218,9 +231,10 @@ export default function Register() {
                                                 type="tel"
                                                 value={phoneNumber}
                                                 onChange={(e) => {
-                                                    setPhoneNumber(e.target.value);
+                                                    setPhoneNumber(e.target.value.slice(0, LIMITS.phoneMax));
                                                     if (error) setError('');
                                                 }}
+                                                maxLength={LIMITS.phoneMax}
                                                 inputMode="tel"
                                                 autoComplete="tel"
                                                 className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
@@ -243,9 +257,10 @@ export default function Register() {
                                                     type="text"
                                                     value={street}
                                                     onChange={(e) => {
-                                                        setStreet(e.target.value);
+                                                        setStreet(e.target.value.slice(0, LIMITS.streetMax));
                                                         if (error) setError('');
                                                     }}
+                                                    maxLength={LIMITS.streetMax}
                                                     className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                     placeholder="Calle"
                                                 />
@@ -254,9 +269,10 @@ export default function Register() {
                                                 type="text"
                                                 value={streetNumber}
                                                 onChange={(e) => {
-                                                    setStreetNumber(e.target.value);
+                                                    setStreetNumber(e.target.value.slice(0, LIMITS.streetNumberMax));
                                                     if (error) setError('');
                                                 }}
+                                                maxLength={LIMITS.streetNumberMax}
                                                 className="block w-full px-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="Numero"
                                             />
@@ -264,9 +280,10 @@ export default function Register() {
                                                 type="text"
                                                 value={distric}
                                                 onChange={(e) => {
-                                                    setDistric(e.target.value);
+                                                    setDistric(e.target.value.slice(0, LIMITS.districMax));
                                                     if (error) setError('');
                                                 }}
+                                                maxLength={LIMITS.districMax}
                                                 className="block w-full px-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="Barrio"
                                             />

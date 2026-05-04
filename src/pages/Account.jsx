@@ -13,6 +13,13 @@ export default function Account() {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
     const [savingProfile, setSavingProfile] = useState(false);
+    const LIMITS = {
+        nameMax: 50,
+        phoneMax: 10,
+        streetMax: 60,
+        streetNumberMax: 10,
+        districMax: 50,
+    };
 
     useEffect(() => {
         if (authLoading) return;
@@ -166,7 +173,8 @@ export default function Account() {
                                 <div>
                                     <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Nombre</label>
                                     <input type="text" value={formData.name || ''} readOnly={!isEditing}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        onChange={e => setFormData({ ...formData, name: e.target.value.slice(0, LIMITS.nameMax) })}
+                                        maxLength={LIMITS.nameMax}
                                         className={`w-full px-4 py-2.5 mt-2 rounded-xl border ${isEditing ? 'border-[#e6c0e6] bg-white' : 'border-gray-200 bg-[#f7f1fa]'} focus:outline-none focus:ring-2 focus:ring-[#610361]/20`} />
                                 </div>
                                 <div>
@@ -177,7 +185,8 @@ export default function Account() {
                                 <div>
                                     <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Teléfono</label>
                                     <input type="text" value={formData.phoneNumber || ''} readOnly={!isEditing}
-                                        onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
+                                        onChange={e => setFormData({ ...formData, phoneNumber: e.target.value.slice(0, LIMITS.phoneMax) })}
+                                        maxLength={LIMITS.phoneMax}
                                         className={`w-full px-4 py-2.5 mt-2 rounded-xl border ${isEditing ? 'border-[#e6c0e6] bg-white' : 'border-gray-200 bg-[#f7f1fa]'} focus:outline-none focus:ring-2 focus:ring-[#610361]/20`} />
                                 </div>
                                 {!isEditing ? (
@@ -199,21 +208,24 @@ export default function Account() {
                                         <div>
                                             <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Calle</label>
                                             <input type="text" value={formData.street || ''}
-                                                onChange={e => setFormData({ ...formData, street: e.target.value })}
+                                                onChange={e => setFormData({ ...formData, street: e.target.value.slice(0, LIMITS.streetMax) })}
+                                                maxLength={LIMITS.streetMax}
                                                 className="w-full px-4 py-2.5 mt-2 rounded-xl border border-[#e6c0e6] bg-white focus:outline-none focus:ring-2 focus:ring-[#610361]/20"
                                                 placeholder="Ej: Calle 50a" />
                                         </div>
                                         <div>
                                             <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Número</label>
                                             <input type="text" value={formData.streetNumber || ''}
-                                                onChange={e => setFormData({ ...formData, streetNumber: e.target.value })}
+                                                onChange={e => setFormData({ ...formData, streetNumber: e.target.value.slice(0, LIMITS.streetNumberMax) })}
+                                                maxLength={LIMITS.streetNumberMax}
                                                 className="w-full px-4 py-2.5 mt-2 rounded-xl border border-[#e6c0e6] bg-white focus:outline-none focus:ring-2 focus:ring-[#610361]/20"
                                                 placeholder="Ej: #19b-22" />
                                         </div>
                                         <div>
                                             <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Barrio</label>
                                             <input type="text" value={formData.distric || ''}
-                                                onChange={e => setFormData({ ...formData, distric: e.target.value })}
+                                                onChange={e => setFormData({ ...formData, distric: e.target.value.slice(0, LIMITS.districMax) })}
+                                                maxLength={LIMITS.districMax}
                                                 className="w-full px-4 py-2.5 mt-2 rounded-xl border border-[#e6c0e6] bg-white focus:outline-none focus:ring-2 focus:ring-[#610361]/20"
                                                 placeholder="Ej: Campestre" />
                                         </div>
