@@ -1,11 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import Breadcrumb from '../components/Breadcrumb';
 import Swal from 'sweetalert2';
 
 export default function Cart() {
     const navigate = useNavigate();
     const { cart, updateQty, removeItem, clearCart } = useCart();
+    const { isAuthenticated } = useAuth();
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const itemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -56,6 +58,26 @@ export default function Cart() {
                 customClass: { title: 'font-winkySans' },
             });
         }
+    };
+
+    const handleCheckout = async () => {
+        if (!isAuthenticated) {
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Inicia sesión',
+                text: 'Inicia sesión para terminar la compra.',
+                confirmButtonText: 'Ir al login',
+                confirmButtonColor: '#610361',
+                customClass: {
+                    title: 'font-winkySans',
+                    htmlContainer: 'font-winkySans',
+                    confirmButton: 'font-winkySans',
+                },
+            });
+            navigate('/login');
+            return;
+        }
+        navigate('/checkout');
     };
 
     return (
@@ -226,7 +248,7 @@ export default function Cart() {
                                     <p className="mt-2 text-xs text-[#8a5a93]">Impuestos incluidos.</p>
                                 </div>
                                 <button
-                                    onClick={() => navigate('/checkout')}
+                                    onClick={handleCheckout}
                                     className="mt-5 w-full rounded-xl bg-[#610361] py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#4a024a]"
                                 >
                                     Proceder al Pago
