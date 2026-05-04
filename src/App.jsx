@@ -5,6 +5,8 @@ import Shop from './pages/Shop';
 import Product from './pages/Product';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import Account from './pages/Account';
 import Wishlist from './pages/Wishlist';
 import Orders from './pages/Orders';
@@ -23,6 +25,8 @@ export default function App() {
                     <Route path="product/:slug" element={<Product />} />
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
+                    <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="reset-password" element={<ResetPasswordPage />} />
                     <Route path="account" element={<Account />} />
                     <Route path="wishlist" element={<Wishlist />} />
                     <Route path="orders" element={<Orders />} />
