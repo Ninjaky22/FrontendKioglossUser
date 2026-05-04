@@ -293,7 +293,7 @@ export default function Register() {
                             {/* Login link */}
                             <p className="mt-4 text-center text-xs text-gray-400 font-winkySans">
                                 ¿Ya tienes una cuenta?{' '}
-                                <Link to="/login" className="text-[#610361] font-bold hover:underline transition-colors duration-150">
+                                <Link to="/login" className="text-[#a21caf] font-bold hover:underline transition-colors duration-150">
                                     Inicia Sesión
                                 </Link>
                             </p>
