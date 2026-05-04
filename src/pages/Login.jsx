@@ -68,7 +68,7 @@ export default function Login() {
                         {/* Top accent bar */}
                         <div className="h-1.5 w-full" style={{ background: '#610361' }} />
 
-                        <div className="px-6 py-6 sm:px-8 sm:py-7">
+                        <div className="px-6 py-6 sm:px-8 sm:py-3">
                             {/* Header */}
                             <div className="text-center mb-4">
                                 <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg" style={{ background: '#610361' }}>
@@ -153,7 +153,7 @@ export default function Login() {
                                 </div>
 
                                 {/* Submit */}
-                                <div className="mt-5">
+                                <div className="mt-3">
                                     <button
                                         type="submit"
                                         disabled={loading}
@@ -169,12 +169,21 @@ export default function Login() {
                             </form>
 
                             {/* Register link */}
-                            <p className="mt-4 text-center text-xs text-gray-400 font-winkySans">
+                            <p className="mt-1 text-center text-xs text-gray-400 font-winkySans">
                                 ¿No tienes una cuenta?{' '}
                                 <Link to="/register" className="text-[#a21caf] font-bold hover:underline transition-colors duration-150">
                                     Regístrate ahora
                                 </Link>
                             </p>
+                        </div>
+
+                        <div className="flex justify-center">
+                            <Link
+                                to="/forgot-password"
+                                className="text-xs text-[#a21caf] font-semibold hover:underline transition-colors duration-150"
+                                >
+                                ¿Olvidaste tu contraseña?
+                            </Link>
                         </div>
                     </div>
 
