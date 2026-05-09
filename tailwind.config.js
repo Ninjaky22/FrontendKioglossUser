@@ -2,11 +2,14 @@ module.exports = {
   content: ["./src/**/*.{jsx, js}"],
 
   theme: {
-    screen: {
+    // Corregido de "screen" a "screens" para que Tailwind lo detecte bien
+    screens: {
       sm: "576px",
       md: "768px",
       lg: "992px",
       xl: "1200px",
+      "2xl": "1536px", // Monitores de 24" y 27"
+      "3xl": "1800px", // Monitores gigantes o ultra anchos
     },
     container: {
       center: true,

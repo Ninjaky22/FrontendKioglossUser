@@ -27,11 +27,16 @@ export default function Shop() {
         productService.getAllTags().then(d => setTags(d || [])).catch(() => {});
     }, []);
 
+    // Sincronización maestra: Leemos TODOS los parámetros desde la URL
     useEffect(() => {
         if (tags.length === 0) return;
         const search = searchParams.get('search') || '';
         const catParam = searchParams.get('categories') || searchParams.get('category') || '';
+        const sortParam = searchParams.get('sort') || '';
+
         setSearchQuery(search);
+        setSortBy(sortParam);
+
         if (catParam) {
             const catNames = catParam.split(',').map(c => decodeURIComponent(c.trim()));
             const matched = catNames.filter(cn => tags.some(t => t.name?.toLowerCase() === cn.toLowerCase()));
@@ -72,10 +77,12 @@ export default function Shop() {
         }
     };
 
-    const updateURL = (names, search) => {
+    // Actualizamos la URL incluyendo el estado de ordenamiento (sort)
+    const updateURL = (names, search, sort) => {
         const params = {};
-        if (names.length > 0) params.categories = names.join(',');
+        if (names && names.length > 0) params.categories = names.join(',');
         if (search) params.search = search;
+        if (sort) params.sort = sort;
         setSearchParams(params, { replace: true });
     };
 
@@ -84,12 +91,13 @@ export default function Shop() {
         setSelectedTagNames(names);
         setCurrentPage(0);
         setShowOutOfStock(false);
-        updateURL(names, searchQuery);
+        updateURL(names, searchQuery, sortBy); // Pasamos el sortBy actual para no perderlo
     };
 
     const clearAll = () => {
         setSearchQuery('');
         setSelectedTagNames([]);
+        setSortBy('');
         setSearchParams({}, { replace: true });
         setCurrentPage(0);
         setShowOutOfStock(false);
@@ -106,7 +114,6 @@ export default function Shop() {
 
             <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 pb-16 items-start">
                 
-                {/* Overlay móvil para el sidebar */}
                 {isMobileSidebarOpen && (
                     <div 
                         className="fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity"
@@ -114,7 +121,6 @@ export default function Shop() {
                     ></div>
                 )}
 
-                {/* Contenedor del Sidebar (Drawer en móvil, grid normal en PC) */}
                 <div className={`fixed inset-y-0 left-0 z-50 w-[280px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:relative lg:w-auto lg:bg-transparent lg:shadow-none lg:z-auto lg:transform-none lg:translate-x-0 ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <div className="h-full overflow-y-auto lg:overflow-visible">
                         <div className="p-4 lg:hidden flex items-center justify-between border-b border-purple-100">
@@ -129,7 +135,6 @@ export default function Shop() {
                             </button>
                         </div>
                         
-                        {/* Controles extra en móvil */}
                         <div className="p-4 lg:hidden flex flex-col gap-3 border-b border-purple-100 bg-purple-50/30 overflow-visible">
                             <div className="relative w-full" ref={mobileSortDropdownRef}>
                                 <button
@@ -157,6 +162,8 @@ export default function Shop() {
                                                 <button
                                                     onClick={() => {
                                                         setSortBy(option.value);
+                                                        setCurrentPage(0); // Reinicia a la pág 1 al ordenar
+                                                        updateURL(selectedTagNames, searchQuery, option.value); // Guarda en URL
                                                         setIsMobileSortDropdownOpen(false);
                                                     }}
                                                     className={`w-full text-left px-4 py-2.5 hover:bg-[#fce4ff] transition-colors ${sortBy === option.value ? 'text-[#9b30a0] font-bold bg-purple-50/50' : 'text-[#610361]'}`}
@@ -194,11 +201,8 @@ export default function Shop() {
                 </div>
 
                 <div className="col-span-1 lg:col-span-3">
-
-                    {/* ── Barra de filtros ── */}
                     <div className="bg-white rounded-2xl border border-purple-100/70 shadow-sm px-3 sm:px-4 py-3 mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
 
-                        {/* Botón Filtros Móvil */}
                         <button 
                             onClick={() => setIsMobileSidebarOpen(true)}
                             className="w-full sm:w-auto lg:hidden appearance-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm text-white bg-[#610361] hover:bg-[#9b30a0] rounded-xl font-winkySans focus:outline-none shadow-md shadow-purple-200 transition-all font-bold"
@@ -212,7 +216,6 @@ export default function Shop() {
                             )}
                         </button>
 
-                        {/* Sort select */}
                         <div className="relative w-full sm:w-auto hidden lg:block" ref={sortDropdownRef}>
                             <button
                                 onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
@@ -239,6 +242,8 @@ export default function Shop() {
                                             <button
                                                 onClick={() => {
                                                     setSortBy(option.value);
+                                                    setCurrentPage(0); // Reinicia la paginación al ordenar
+                                                    updateURL(selectedTagNames, searchQuery, option.value); // Sync a la URL
                                                     setIsSortDropdownOpen(false);
                                                 }}
                                                 className={`w-full text-left px-4 py-2.5 hover:bg-[#fce4ff] transition-colors ${sortBy === option.value ? 'text-[#9b30a0] font-bold bg-purple-50/50' : 'text-[#610361]'}`}
@@ -251,12 +256,10 @@ export default function Shop() {
                             )}
                         </div>
 
-                        {/* Divider */}
                         {(products.some(p => p.stock != null && p.stock <= 0) || hasActiveFilters) && (
                             <div className="w-px h-6 bg-purple-100 hidden sm:block"></div>
                         )}
 
-                        {/* Mostrar agotados */}
                         {products.some(p => p.stock != null && p.stock <= 0) && (
                             <button
                                 onClick={() => setShowOutOfStock(v => !v)}
@@ -271,7 +274,6 @@ export default function Shop() {
                             </button>
                         )}
 
-                        {/* Active filter chips */}
                         {hasActiveFilters && (
                             <div className="flex items-center gap-2 flex-wrap">
                                 {selectedTagNames.map(name => (
@@ -286,7 +288,7 @@ export default function Shop() {
                                                 const next = selectedTagNames.filter(n => n !== name);
                                                 setSelectedTagNames(next);
                                                 setCurrentPage(0);
-                                                updateURL(next, searchQuery);
+                                                updateURL(next, searchQuery, sortBy); // Mantenemos el sortBy al eliminar categoría
                                             }}
                                             className="w-4 h-4 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-colors ml-0.5"
                                         >
@@ -300,7 +302,11 @@ export default function Shop() {
                                         <i className="fa-solid fa-magnifying-glass text-[10px] opacity-70"></i>
                                         "{searchQuery}"
                                         <button
-                                            onClick={clearAll}
+                                            onClick={() => {
+                                                setSearchQuery('');
+                                                setCurrentPage(0);
+                                                updateURL(selectedTagNames, '', sortBy); // No borrar todo, solo la búsqueda
+                                            }}
                                             className="w-4 h-4 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-colors ml-0.5"
                                         >
                                             <i className="fa-solid fa-xmark text-[9px]"></i>
@@ -321,7 +327,6 @@ export default function Shop() {
                         )}
                     </div>
 
-                    {/* ── Grid de productos ── */}
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-24 gap-4">
                             <div className="w-12 h-12 rounded-full border-4 border-purple-200 border-t-[#9b30a0] animate-spin"></div>
@@ -355,7 +360,6 @@ export default function Shop() {
                                 })()}
                             </div>
 
-                            {/* ── Paginación ── */}
                             {totalPages > 1 && (
                                 <div className="flex flex-wrap justify-center items-center mt-10 gap-2 sm:gap-4 px-2">
                                     <button
