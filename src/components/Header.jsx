@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import productService from '../services/productService';
 import Swal from 'sweetalert2';
+import NotificationBell from './NotificationBell';
 
 // ── Toast mixin: esquina superior derecha, sin botón de confirmación, fuente winkySans ──
 const Toast = Swal.mixin({
@@ -275,6 +276,7 @@ export default function Header() {
                                 </div>
                             )}
                         </div>
+                        {isAuthenticated && <NotificationBell />}
                         {isAuthenticated ? (
                             <Link to="/account" className="text-center text-gray-600 hover:text-[#9b30a0] transition relative font-winkySans font-medium">
                                 <div className="text-xl md:text-2xl"><i className="fa-regular fa-user"></i></div>
