@@ -67,7 +67,27 @@ export default function Shop() {
         try {
             setLoading(true); setError(null);
             const data = await productService.getAllProducts(currentPage, 12, searchQuery, selectedTagNames, sortBy);
-            setProducts(data.content || data || []);
+
+            // Normalizamos el array de productos recibido (puede venir paginado en data.content)
+            let items = data?.content || data || [];
+
+            // Aplicamos ordenamiento en cliente como respaldo para asegurar que
+            // el orden se respete incluso cuando la API no lo aplique sobre filtros.
+            if (sortBy) {
+                const byPriceAsc = (a, b) => (Number(a?.price) || 0) - (Number(b?.price) || 0);
+                const byPriceDesc = (a, b) => (Number(b?.price) || 0) - (Number(a?.price) || 0);
+                const byLatest = (a, b) => {
+                    const aKey = a?.created_at ?? a?.createdAt ?? a?.id ?? 0;
+                    const bKey = b?.created_at ?? b?.createdAt ?? b?.id ?? 0;
+                    return bKey - aKey;
+                };
+
+                if (sortBy === 'price-low') items = [...items].sort(byPriceAsc);
+                else if (sortBy === 'price-high') items = [...items].sort(byPriceDesc);
+                else if (sortBy === 'latest') items = [...items].sort(byLatest);
+            }
+
+            setProducts(items);
             setTotalPages(data.totalPages || 1);
         } catch {
             setError('Error al cargar los productos.');
