@@ -13,6 +13,7 @@ export default function Register() {
     const [street, setStreet] = useState('');
     const [streetNumber, setStreetNumber] = useState('');
     const [distric, setDistric] = useState('');
+    const [city, setCity] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,6 +28,7 @@ export default function Register() {
         streetMax: 60,
         streetNumberMax: 10,
         districMax: 50,
+        cityMax: 60,
     };
 
     // Redirect if already logged in
@@ -48,8 +50,10 @@ export default function Register() {
         const trimmedEmail = email.trim();
         const trimmedPassword = password.trim();
 
-        if (!trimmedName || !trimmedEmail || !trimmedPassword) {
-            toast('warning', 'Completa los campos obligatorios');
+        if (!trimmedName || !trimmedEmail || !trimmedPassword
+            || !phoneNumber.trim() || !street.trim() || !streetNumber.trim()
+            || !distric.trim() || !city.trim()) {
+            toast('warning', 'Todos los campos son obligatorios');
             return;
         }
         if (trimmedName.length < LIMITS.nameMin) {
@@ -72,7 +76,7 @@ export default function Register() {
         try {
             await register({
                 email: trimmedEmail, name: trimmedName, password, phoneNumber,
-                address: { street, streetNumber, distric },
+                address: { street, streetNumber, distric, city },
                 account: { pointsPerPurchase: 0, isActive: true },
             });
             Swal.fire({
@@ -234,6 +238,7 @@ export default function Register() {
                                                     setPhoneNumber(e.target.value.slice(0, LIMITS.phoneMax));
                                                     if (error) setError('');
                                                 }}
+                                                required
                                                 maxLength={LIMITS.phoneMax}
                                                 inputMode="tel"
                                                 autoComplete="tel"
@@ -260,9 +265,10 @@ export default function Register() {
                                                         setStreet(e.target.value.slice(0, LIMITS.streetMax));
                                                         if (error) setError('');
                                                     }}
+                                                    required
                                                     maxLength={LIMITS.streetMax}
                                                     className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
-                                                    placeholder="Calle"
+                                                    placeholder="Calle *"
                                                 />
                                             </div>
                                             <input
@@ -272,9 +278,10 @@ export default function Register() {
                                                     setStreetNumber(e.target.value.slice(0, LIMITS.streetNumberMax));
                                                     if (error) setError('');
                                                 }}
+                                                required
                                                 maxLength={LIMITS.streetNumberMax}
                                                 className="block w-full px-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
-                                                placeholder="Numero"
+                                                placeholder="Número *"
                                             />
                                             <input
                                                 type="text"
@@ -283,10 +290,28 @@ export default function Register() {
                                                     setDistric(e.target.value.slice(0, LIMITS.districMax));
                                                     if (error) setError('');
                                                 }}
+                                                required
                                                 maxLength={LIMITS.districMax}
                                                 className="block w-full px-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
-                                                placeholder="Barrio"
+                                                placeholder="Barrio *"
                                             />
+                                            <div className="relative sm:col-span-2">
+                                                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-purple-300 pointer-events-none">
+                                                    <i className="fa-solid fa-city text-sm"></i>
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    value={city}
+                                                    onChange={(e) => {
+                                                        setCity(e.target.value.slice(0, LIMITS.cityMax));
+                                                        if (error) setError('');
+                                                    }}
+                                                    required
+                                                    maxLength={LIMITS.cityMax}
+                                                    className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
+                                                    placeholder="Ciudad *"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

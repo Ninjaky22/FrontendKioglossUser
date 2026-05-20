@@ -20,7 +20,7 @@ export default function Footer() {
                         {/* ── Columna 1: Brand ── */}
                         <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-5 sm:col-span-2 lg:col-span-1">
                             <img
-                                src="/assets/images/logo.png"
+                                src="/assets/images/logoPag.png"
                                 alt="Kio Gloss"
                                 className="w-44 brightness-200 drop-shadow-lg"
                             />

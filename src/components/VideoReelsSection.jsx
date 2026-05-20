@@ -78,10 +78,10 @@ export default function VideoReelsSection() {
                             Comunidad
                         </span>
                         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#610361] font-swash leading-tight">
-                            Destacados en <span className="text-[#9b30a0] italic">videos</span>
+                            Videos <span className="text-[#9b30a0] italic">Destacados</span>
                         </h2>
                         <p className="text-gray-600 mt-2 font-winkySans text-sm sm:text-base">
-                            Mira lo que nuestros clientes están compartiendo
+                            Mira lo que estamos compartiendo
                         </p>
                     </div>
                 </div>

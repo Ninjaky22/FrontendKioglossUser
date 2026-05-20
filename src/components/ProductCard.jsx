@@ -13,8 +13,15 @@ export default function ProductCard({ product }) {
     const isFav = favoriteIds.includes(product?.id);
     const [favorited, setFavorited] = useState(isFav);
     const [adding, setAdding] = useState(false);
+    // idFa local: evita depender del mapa del contexto para el segundo click (quitar)
+    const [localIdFa, setLocalIdFa] = useState(() => getFavoriteIdFa(product?.id));
 
-    useEffect(() => setFavorited(favoriteIds.includes(product?.id)), [favoriteIds, product?.id]);
+    useEffect(() => {
+        setFavorited(favoriteIds.includes(product?.id));
+        // Sincronizar idFa local desde el contexto cuando cambie favoriteIds
+        const idFa = getFavoriteIdFa(product?.id);
+        if (idFa) setLocalIdFa(idFa);
+    }, [favoriteIds, product?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const cartItem = cart.find(i => i.variantId === product?.defaultVariantId) || cart.find(i => i.id === product?.id);
     const cartQty = cartItem?.quantity || 0;
@@ -123,55 +130,30 @@ export default function ProductCard({ product }) {
     };
 
     const handleFavorite = async () => {
-        if (!isAuthenticated || !accountId ) {
-            Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Inicia sesión para agregar a favoritos', showConfirmButton: false, timer: 1500, timerProgressBar: true, customClass: {
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans',
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans'
-            } });
+        if (!isAuthenticated || !accountId) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Inicia sesión para agregar a favoritos', showConfirmButton: false, timer: 1500, timerProgressBar: true, customClass: { title: 'font-winkySans' } });
             return;
         }
         if (adding) return;
         setAdding(true);
         try {
             if (favorited) {
-                const idFa = getFavoriteIdFa(product.id);
+                // Usar idFa local primero, luego el del contexto como fallback
+                const idFa = localIdFa || getFavoriteIdFa(product.id);
                 if (idFa) {
                     await productService.removeFavorite(idFa);
                     removeFavoriteId(product.id);
-                     setFavorited(false);
-                    Swal.fire({ toast: true, 
-                        position: 'top-end', icon: 'info', 
-                        title: 'Eliminado de favoritos',
-                        showConfirmButton: false, timer: 1500, timerProgressBar: true,
-                        customClass: {
-                            title: 'font-winkySans',
-                            htmlContainer: 'font-winkySans',
-                            confirmButton: 'font-winkySans',
-                            cancelButton: 'font-winkySans'
-                        }
-                    });
+                    setFavorited(false);
+                    setLocalIdFa(null);
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Eliminado de favoritos', showConfirmButton: false, timer: 1500, timerProgressBar: true, customClass: { title: 'font-winkySans' } });
                 }
             } else {
-                await productService.addFavorite(accountId, product.id);
-                addFavoriteId(product.id);
+                const data = await productService.addFavorite(accountId, product.id);
+                const newIdFa = data?.idFa ?? null;
+                addFavoriteId(product.id, newIdFa);
+                setLocalIdFa(newIdFa);   // guardar idFa localmente para el siguiente click
                 setFavorited(true);
-                Swal.fire({ toast: true, 
-                    position: 'top-end', icon: 'success', 
-                    title: '¡Agregado a favoritos!',
-                    showConfirmButton: false, timer: 1500, timerProgressBar: true,
-                    customClass: {
-                        title: 'font-winkySans',
-                        htmlContainer: 'font-winkySans',
-                        confirmButton: 'font-winkySans',
-                        cancelButton: 'font-winkySans'
-                    }
-                });
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: '¡Agregado a favoritos!', showConfirmButton: false, timer: 1500, timerProgressBar: true, customClass: { title: 'font-winkySans' } });
             }
         } finally {
             setAdding(false);
@@ -246,12 +228,6 @@ export default function ProductCard({ product }) {
                     </div>
                 )}
 
-                {/* Badge: favorito */}
-                {favorited && (
-                    <span className="absolute top-2.5 right-2.5 w-6 h-6 lg:w-7 lg:h-7 bg-white rounded-full shadow-md flex items-center justify-center transition-transform hover:scale-110">
-                        <i className="fa-solid fa-heart text-red-500 text-[10px] lg:text-sm"></i>
-                    </span>
-                )}
 
                 {/* Badge: cantidad en carrito */}
                 {cartQty > 0 && (

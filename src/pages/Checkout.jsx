@@ -222,18 +222,11 @@ export default function Checkout() {
                             </div>
 
                             {/* Footer PayPal */}
-                            <div className="flex items-center justify-between px-6 py-3.5 border-t border-[#e8d5e8] gap-3 flex-wrap">
+                            <div className="px-6 py-3.5 border-t border-[#e8d5e8]">
                                 <span className="flex items-center gap-1.5 text-[0.72rem] text-gray-400 italic">
                                     <i className="fa-solid fa-circle-info"></i>
                                     El total se convertirá a USD para procesar con PayPal
                                 </span>
-                                <button
-                                    onClick={() => processOrder('PENDING')}
-                                    disabled={loading}
-                                    className="text-[0.72rem] font-bold uppercase tracking-wider text-[#610361] border border-[#610361] rounded-lg px-3.5 py-1.5 hover:bg-[#610361] hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
-                                >
-                                    {loading ? 'Procesando...' : 'Pagar después'}
-                                </button>
                             </div>
                         </div>
                     </div>

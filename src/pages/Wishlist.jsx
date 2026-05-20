@@ -152,9 +152,29 @@ export default function Wishlist() {
         }
     };
 
-    const handleAddToCart = (product) => {
-        addToCart(product, 1);
-        navigate('/cart');
+    const handleAddToCart = async (fav) => {
+        // Los productos con variantes deben ir a la página del producto
+        if (fav.hasVariants && !fav.defaultVariantId) {
+            navigate(`/product/${fav.slug}`);
+            return;
+        }
+        try {
+            const variantId = fav.defaultVariantId || fav.variantId || null;
+            await addToCart({ ...fav, variantId }, 1);
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success',
+                title: '¡Agregado al carrito!',
+                showConfirmButton: false, timer: 2000, timerProgressBar: true,
+                customClass: { title: 'font-winkySans', htmlContainer: 'font-winkySans' },
+            });
+        } catch {
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'error',
+                title: 'Error al agregar al carrito',
+                showConfirmButton: false, timer: 2500, timerProgressBar: true,
+                customClass: { title: 'font-winkySans', htmlContainer: 'font-winkySans' },
+            });
+        }
     };
 
     if (authLoading || loading) return (
@@ -263,13 +283,6 @@ export default function Wishlist() {
                                                     <p className="text-base font-bold text-(--ink) sm:text-lg">COP {fav.price}</p>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2">
-                                                    <button
-                                                        onClick={() => handleAddToCart(fav)}
-                                                        className="inline-flex items-center gap-2 rounded-full bg-(--primary) px-3 py-2 text-[11px] font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#4a024a] sm:px-4 sm:text-xs"
-                                                    >
-                                                        <i className="fa-solid fa-cart-shopping"></i>
-                                                        Al Carrito
-                                                    </button>
                                                     <button
                                                         onClick={() => handleRemove(fav.idFa, fav.id, fav.title || fav.name)}
                                                         className="inline-flex items-center gap-2 rounded-full border border-red-100 px-3 py-2 text-[11px] font-semibold text-red-500 transition hover:bg-red-200 sm:px-4 sm:text-xs"

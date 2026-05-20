@@ -19,6 +19,7 @@ export default function Account() {
         streetMax: 60,
         streetNumberMax: 10,
         districMax: 50,
+        cityMax: 60,
     };
 
     useEffect(() => {
@@ -37,6 +38,7 @@ export default function Account() {
             street: '',
             streetNumber: '',
             distric: '',
+            city: '',
         });
     }, [isAuthenticated, user, authLoading, navigate, refreshUser]);
 
@@ -71,11 +73,13 @@ export default function Account() {
                 name: formData.name,
                 phoneNumber: formData.phoneNumber,
             };
+            const trimmedCity = (formData.city || '').trim();
             if (hasNewAddress) {
                 payload.address = {
                     street: trimmedStreet,
                     streetNumber: trimmedStreetNumber,
                     distric: trimmedDistric,
+                    city: trimmedCity,
                 };
             }
             await authService.updateUser({
@@ -190,11 +194,18 @@ export default function Account() {
                                         className={`w-full px-4 py-2.5 mt-2 rounded-xl border ${isEditing ? 'border-[#e6c0e6] bg-white' : 'border-gray-200 bg-[#f7f1fa]'} focus:outline-none focus:ring-2 focus:ring-[#610361]/20`} />
                                 </div>
                                 {!isEditing ? (
-                                    <div>
-                                        <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Dirección</label>
-                                        <input type="text" value={user.account?.address || ''} readOnly
-                                            className="w-full px-4 py-2.5 mt-2 rounded-xl border border-gray-200 bg-[#f7f1fa]" />
-                                    </div>
+                                    <>
+                                        <div>
+                                            <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Dirección</label>
+                                            <input type="text" value={user.account?.address || ''} readOnly
+                                                className="w-full px-4 py-2.5 mt-2 rounded-xl border border-gray-200 bg-[#f7f1fa]" />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Ciudad</label>
+                                            <input type="text" value={user.account?.city || ''} readOnly
+                                                className="w-full px-4 py-2.5 mt-2 rounded-xl border border-gray-200 bg-[#f7f1fa]" />
+                                        </div>
+                                    </>
                                 ) : (
                                     <>
                                         <div>
@@ -228,6 +239,14 @@ export default function Account() {
                                                 maxLength={LIMITS.districMax}
                                                 className="w-full px-4 py-2.5 mt-2 rounded-xl border border-[#e6c0e6] bg-white focus:outline-none focus:ring-2 focus:ring-[#610361]/20"
                                                 placeholder="Ej: Campestre" />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs uppercase tracking-widest text-gray-500 font-winkySans">Ciudad</label>
+                                            <input type="text" value={formData.city || ''}
+                                                onChange={e => setFormData({ ...formData, city: e.target.value.slice(0, LIMITS.cityMax) })}
+                                                maxLength={LIMITS.cityMax}
+                                                className="w-full px-4 py-2.5 mt-2 rounded-xl border border-[#e6c0e6] bg-white focus:outline-none focus:ring-2 focus:ring-[#610361]/20"
+                                                placeholder="Ej: Medellín" />
                                         </div>
                                     </>
                                 )}

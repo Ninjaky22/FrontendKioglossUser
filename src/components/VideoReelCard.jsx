@@ -31,7 +31,11 @@ export default function VideoReelCard({ video, onVideoClick }) {
         };
     }, []);
 
-    const isDirect = parsed?.platform === 'direct';
+    const platform  = parsed?.platform ?? 'unknown';
+    const isDirect  = platform === 'direct';
+    // Solo mostrar preview de iframe para contenido nativo vertical (TikTok, mp4)
+    // YouTube y Facebook son 16:9 y se deforman en la tarjeta 9:16
+    const canPreview = isDirect || platform === 'tiktok';
 
     return (
         <div className="w-[220px] sm:w-[250px] md:w-[280px] lg:w-[200px] shrink-0 snap-center md:snap-start font-winkySans">
@@ -50,8 +54,8 @@ export default function VideoReelCard({ video, onVideoClick }) {
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-0' : 'opacity-100'}`}
                 />
 
-                {/* Video Player */}
-                {showVideo && parsed && (
+                {/* Video Player — solo para contenido vertical nativo */}
+                {showVideo && canPreview && (
                     isDirect ? (
                         <video
                             ref={videoRef}
