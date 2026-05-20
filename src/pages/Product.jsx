@@ -36,7 +36,8 @@ export default function Product() {
             });
         });
         const result = {};
-        for (const key in types) result[key] = Array.from(types[key].values());
+        for (const key in types)
+            result[key] = Array.from(types[key].values()).sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
         return result;
     }, [product]);
 
@@ -385,7 +386,13 @@ export default function Product() {
 
                         {/* Dynamic Variants */}
                         {Object.keys(variantTypes).length > 0 && Object.entries(variantTypes).map(([typeName, options]) => {
-                            const isColor = options.some(o => o.metaValue && o.metaValue.startsWith('#'));
+                            // Detecta colores en formato hex (#rrggbb) O nombre CSS válido (red, blue, etc.)
+                            const isValidColor = (val) => {
+                                if (!val) return false;
+                                if (val.startsWith('#')) return true;
+                                return typeof CSS !== 'undefined' && CSS.supports('color', val);
+                            };
+                            const isColor = options.some(o => isValidColor(o.metaValue));
                             return (
                                 <div key={typeName}>
                                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2.5">
