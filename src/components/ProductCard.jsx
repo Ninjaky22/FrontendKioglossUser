@@ -45,16 +45,8 @@ export default function ProductCard({ product }) {
                 showConfirmButton: false, 
                 timer: 2000, 
                 timerProgressBar: true,
-                    customClass: {
-                        title: 'font-winkySans',
-                        htmlContainer: 'font-winkySans',
-                        confirmButton: 'font-winkySans',
-                        cancelButton: 'font-winkySans',
-                        title: 'font-winkySans',
-                        htmlContainer: 'font-winkySans',
-                        confirmButton: 'font-winkySans',
-                        cancelButton: 'font-winkySans'
-            }});
+                    customClass: { title: 'font-winkySans', htmlContainer: 'font-winkySans', confirmButton: 'font-winkySans', cancelButton: 'font-winkySans' }
+            });
             navigate(`/product/${slug}`);
             return;
         }
@@ -66,16 +58,8 @@ export default function ProductCard({ product }) {
                 showConfirmButton: false, 
                 timer: 2500, 
                 timerProgressBar: true, 
-                    customClass: {
-                    title: 'font-winkySans',
-                    htmlContainer: 'font-winkySans',
-                    confirmButton: 'font-winkySans',
-                    cancelButton: 'font-winkySans',
-                    title: 'font-winkySans',
-                    htmlContainer: 'font-winkySans',
-                    confirmButton: 'font-winkySans',
-                    cancelButton: 'font-winkySans'
-                }});
+                    customClass: { title: 'font-winkySans', htmlContainer: 'font-winkySans', confirmButton: 'font-winkySans', cancelButton: 'font-winkySans' }
+                });
             return;
         }
         addToCart({ ...product, variantId: product.defaultVariantId }, 1);
@@ -88,16 +72,7 @@ export default function ProductCard({ product }) {
             showConfirmButton: false,
             timer: isAuthenticated ? 1800 : 3500,
             timerProgressBar: true,
-             customClass: {
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans',
-                title: 'font-winkySans',
-                htmlContainer: 'font-winkySans',
-                confirmButton: 'font-winkySans',
-                cancelButton: 'font-winkySans'
-            }
+             customClass: { title: 'font-winkySans', htmlContainer: 'font-winkySans', confirmButton: 'font-winkySans', cancelButton: 'font-winkySans' }
         });
     };
 
@@ -114,16 +89,7 @@ export default function ProductCard({ product }) {
                 showConfirmButton: false,
                 timer: 1800,
                 timerProgressBar: true,
-                customClass: {
-                    title: 'font-winkySans',
-                    htmlContainer: 'font-winkySans',
-                    confirmButton: 'font-winkySans',
-                    cancelButton: 'font-winkySans',
-                    title: 'font-winkySans',
-                    htmlContainer: 'font-winkySans',
-                    confirmButton: 'font-winkySans',
-                    cancelButton: 'font-winkySans'
-                }
+                customClass: { title: 'font-winkySans', htmlContainer: 'font-winkySans', confirmButton: 'font-winkySans', cancelButton: 'font-winkySans' }
             });
             removeItem(cartItem);
         }
