@@ -18,6 +18,9 @@ export default function Register() {
     const [loading, setLoading] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
+    const addressTextRegex = /[\p{L}\p{N}]/u;
+    const addressCharactersRegex = /^[\p{L}\p{N}\s#.,/-]+$/u;
+    const streetNumberRegex = /^[\p{L}\p{N}\s#.,/-]+$/u;
     const LIMITS = {
         nameMin: 3,
         nameMax: 50,
@@ -25,9 +28,13 @@ export default function Register() {
         phoneMax: 10,
         emailMax: 254,
         passwordMax: 20,
+        streetMin: 3,
         streetMax: 60,
+        streetNumberMin: 1,
         streetNumberMax: 10,
+        districMin: 2,
         districMax: 50,
+        cityMin: 2,
         cityMax: 60,
     };
 
@@ -68,15 +75,50 @@ export default function Register() {
             toast('warning', 'Contrasena insegura', 'Usa una mayuscula, un numero y un caracter especial');
             return;
         }
+        if (!/^\d+$/.test(phoneNumber.trim())) {
+            toast('warning', 'Telefono invalido', 'Solo se permiten numeros');
+            return;
+        }
         if (phoneNumber.trim() && phoneNumber.trim().length < LIMITS.phoneMin) {
             toast('warning', 'Telefono muy corto', `Minimo ${LIMITS.phoneMin} digitos`);
+            return;
+        }
+        const trimmedStreet = street.trim();
+        const trimmedStreetNumber = streetNumber.trim();
+        const trimmedDistric = distric.trim();
+        const trimmedCity = city.trim();
+        if (trimmedStreet.length < LIMITS.streetMin) {
+            toast('warning', 'Calle muy corta', `Minimo ${LIMITS.streetMin} caracteres`);
+            return;
+        }
+        if (!addressTextRegex.test(trimmedStreet) || !addressCharactersRegex.test(trimmedStreet)) {
+            toast('warning', 'Calle invalida', 'Usa letras, numeros y signos de direccion validos');
+            return;
+        }
+        if (trimmedStreetNumber.length < LIMITS.streetNumberMin || !streetNumberRegex.test(trimmedStreetNumber)) {
+            toast('warning', 'Numero de direccion invalido', 'Usa un formato como 12 o #21-15');
+            return;
+        }
+        if (trimmedDistric.length < LIMITS.districMin || !addressTextRegex.test(trimmedDistric)
+            || !addressCharactersRegex.test(trimmedDistric)) {
+            toast('warning', 'Barrio invalido', 'Revisa el nombre del barrio');
+            return;
+        }
+        if (trimmedCity.length < LIMITS.cityMin || !addressTextRegex.test(trimmedCity)
+            || !addressCharactersRegex.test(trimmedCity)) {
+            toast('warning', 'Ciudad invalida', 'Revisa el nombre de la ciudad');
             return;
         }
         setLoading(true);
         try {
             await register({
-                email: trimmedEmail, name: trimmedName, password, phoneNumber,
-                address: { street, streetNumber, distric, city },
+                email: trimmedEmail, name: trimmedName, password, phoneNumber: phoneNumber.trim(),
+                address: {
+                    street: trimmedStreet,
+                    streetNumber: trimmedStreetNumber,
+                    distric: trimmedDistric,
+                    city: trimmedCity,
+                },
                 account: { pointsPerPurchase: 0, isActive: true },
             });
             Swal.fire({
@@ -90,7 +132,8 @@ export default function Register() {
             setError(msg);
             Swal.fire({
                 toast: true, position: 'top-end', icon: 'error',
-                title: 'Correo o Número ya registrado, intenta con otro.',
+                title: 'No se pudo crear la cuenta',
+                text: msg,
                 showConfirmButton: false, timer: 3000, timerProgressBar: true,
             });
         } finally {
@@ -235,12 +278,13 @@ export default function Register() {
                                                 type="tel"
                                                 value={phoneNumber}
                                                 onChange={(e) => {
-                                                    setPhoneNumber(e.target.value.slice(0, LIMITS.phoneMax));
+                                                    setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, LIMITS.phoneMax));
                                                     if (error) setError('');
                                                 }}
                                                 required
                                                 maxLength={LIMITS.phoneMax}
-                                                inputMode="tel"
+                                                inputMode="numeric"
+                                                pattern="[0-9]*"
                                                 autoComplete="tel"
                                                 className="block w-full pl-11 pr-4 py-2.5 text-gray-700 bg-purple-50/50 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-[#610361]/30 focus:border-[#610361] transition placeholder-gray-300 font-winkySans text-sm outline-none"
                                                 placeholder="3001234567"

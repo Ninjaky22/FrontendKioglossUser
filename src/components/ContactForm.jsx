@@ -7,7 +7,7 @@ export default function ContactForm() {
     const [asunto, setAsunto] = useState('');
     const [mensaje, setMensaje] = useState('');
 
-    const DESTINATION_EMAIL = 'casanovacristian40@gmail.com';
+    const DESTINATION_EMAIL = 'ninjaklooster15@gmail.com';
 
     // ── Límites de caracteres ──
     const LIMITS = {
@@ -48,27 +48,11 @@ export default function ContactForm() {
             `Hola, mi nombre es ${nombre}.\n\n${mensaje}\n\nMi correo de contacto es: ${email}`
         );
 
-        const mailtoUrl = `mailto:${DESTINATION_EMAIL}?subject=${subject}&body=${body}`;
-        const gmailUrl  = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(DESTINATION_EMAIL)}&su=${subject}&body=${body}`;
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(DESTINATION_EMAIL)}&su=${subject}&body=${body}`;
 
-        // Detectar si el dispositivo tiene cliente de correo instalado:
-        // si la ventana pierde el foco en los próximos 500ms significa que
-        // el SO abrió una app (Outlook, Mail, etc.). Si no pierde el foco,
-        // no hay cliente instalado y abrimos Gmail como fallback.
-        let clienteAbierto = false;
-        const onBlur = () => { clienteAbierto = true; };
-        window.addEventListener('blur', onBlur);
+        window.open(gmailUrl, '_blank', 'noopener,noreferrer');
 
-        window.location.href = mailtoUrl;
-
-        setTimeout(() => {
-            window.removeEventListener('blur', onBlur);
-            if (!clienteAbierto) {
-                window.open(gmailUrl, '_blank');
-            }
-        }, 500);
-
-        toast('success', '¡Mensaje listo!', 'Se abrió tu cliente de correo');
+        toast('success', '¡Mensaje listo!', 'Se abrió Gmail en una nueva pestaña');
         setNombre(''); setEmail(''); setAsunto(''); setMensaje('');
     };
 
